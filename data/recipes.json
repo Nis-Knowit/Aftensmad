@@ -1,12 +1,7 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-06T17:54:31.793Z",
+  "exportedAt": "2026-05-06T17:55:21.159Z",
   "recipes": [
-    {
-      "id": "519b0e5b-a785-4208-8012-565b4a821d67",
-      "deletedAt": 1778089896202,
-      "updatedAt": 1778089896202
-    },
     {
       "id": "810737d8-dce2-4017-a83b-44ba647060b9",
       "type": "manual",
@@ -50,16 +45,16 @@
         },
         {
           "kind": "ingredient",
-          "ingredientId": "95196bbb-c390-42e6-9d25-d8deeeb6d449",
-          "amount": 1,
-          "unit": "stk",
+          "ingredientId": "b7aa2ded-f933-44bb-b982-2bc406f03795",
+          "amount": 150,
+          "unit": "g",
           "note": ""
         },
         {
           "kind": "ingredient",
-          "ingredientId": "b7aa2ded-f933-44bb-b982-2bc406f03795",
-          "amount": 150,
-          "unit": "g",
+          "ingredientId": "95196bbb-c390-42e6-9d25-d8deeeb6d449",
+          "amount": 1,
+          "unit": "stk",
           "note": ""
         },
         {
@@ -79,7 +74,12 @@
       ],
       "sourceUrl": "",
       "createdAt": 1778071774971,
-      "updatedAt": 1778071774971
+      "updatedAt": 1778090119039
+    },
+    {
+      "id": "519b0e5b-a785-4208-8012-565b4a821d67",
+      "deletedAt": 1778089896202,
+      "updatedAt": 1778089896202
     },
     {
       "id": "601bc215-58ba-4b29-b865-6e33082937c4",
