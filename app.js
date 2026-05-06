@@ -51,12 +51,13 @@
     importSuccess: (n) => `Importerede ${n} opskrift${n === 1 ? "" : "er"}`,
     addIngredient: "Tilføj ingrediens",
     addSection: "Tilføj sektion",
+    addStep: "Tilføj trin",
     sectionTitle: "Sektion (fx 'Raita')",
+    stepPlaceholder: "Beskriv trinnet…",
     amount: "Mængde",
     unit: "Enhed",
     ingredientName: "Ingrediens",
     noteOptional: "Note (valgfri)",
-    stepsHintSection: "Et trin pr. linje. Start en linje med '## ' for at lave en sektion (fx '## Raita').",
     remove: "Fjern",
     random: "🎲 Tilfældig",
     select: "Vælg",
@@ -1095,7 +1096,98 @@
     searchInput.addEventListener("input", (e) => renderItems(e.target.value));
   }
 
+  // Generic pointer-based DnD reorder for direct children of `list`.
+  // The user must press on an element matching `handleSelector` to start dragging.
+  // Works for both mouse and touch via PointerEvent.
+  function makeSortable(list, { handleSelector, onReorder } = {}) {
+    let dragging = null;
+    let movedSinceDown = false;
+    let activePointerId = null;
+    let activeHandle = null;
+
+    function findChildOf(parent, target) {
+      let n = target;
+      while (n && n.parentNode !== parent) n = n.parentNode;
+      return n;
+    }
+
+    function onPointerDown(e) {
+      if (e.button != null && e.button !== 0) return;
+      const handle = e.target.closest(handleSelector || ".sortable-handle");
+      if (!handle || !list.contains(handle)) return;
+      const row = findChildOf(list, handle);
+      if (!row) return;
+      e.preventDefault();
+      dragging = row;
+      activePointerId = e.pointerId;
+      activeHandle = handle;
+      movedSinceDown = false;
+      try { handle.setPointerCapture(e.pointerId); } catch { /* ignore */ }
+      handle.addEventListener("pointermove", onPointerMove);
+      handle.addEventListener("pointerup", onPointerUp);
+      handle.addEventListener("pointercancel", onPointerUp);
+    }
+
+    function onPointerMove(e) {
+      if (!dragging) return;
+      if (!movedSinceDown) {
+        movedSinceDown = true;
+        dragging.classList.add("dragging");
+      }
+      const y = e.clientY;
+      for (const sibling of list.children) {
+        if (sibling === dragging) continue;
+        const rect = sibling.getBoundingClientRect();
+        if (y >= rect.top && y <= rect.bottom) {
+          const midpoint = rect.top + rect.height / 2;
+          if (y < midpoint) {
+            if (sibling.previousElementSibling !== dragging) {
+              list.insertBefore(dragging, sibling);
+            }
+          } else {
+            if (sibling.nextElementSibling !== dragging) {
+              list.insertBefore(dragging, sibling.nextElementSibling);
+            }
+          }
+          break;
+        }
+      }
+    }
+
+    function onPointerUp() {
+      if (!dragging) return;
+      const handle = activeHandle;
+      if (handle) {
+        handle.removeEventListener("pointermove", onPointerMove);
+        handle.removeEventListener("pointerup", onPointerUp);
+        handle.removeEventListener("pointercancel", onPointerUp);
+        try { handle.releasePointerCapture(activePointerId); } catch { /* ignore */ }
+      }
+      dragging.classList.remove("dragging");
+      const reordered = movedSinceDown;
+      dragging = null;
+      activePointerId = null;
+      activeHandle = null;
+      movedSinceDown = false;
+      if (reordered && onReorder) onReorder();
+    }
+
+    list.addEventListener("pointerdown", onPointerDown);
+  }
+
+  function makeDragHandle() {
+    return el("button", {
+      type: "button",
+      class: "sortable-handle row__handle",
+      "aria-label": "Flyt række",
+      title: "Træk for at flytte",
+      tabindex: "-1",
+      text: "≡",
+    });
+  }
+
   function makeSectionRow(title) {
+    const handle = makeDragHandle();
     const titleInput = el("input", {
       type: "text",
       class: "ing-section__title",
@@ -1112,6 +1204,67 @@
       onclick: () => row.remove(),
     });
     const row = el("div", { class: "ing-section", "data-kind": "section" }, [
+      handle,
+      titleInput,
+      removeBtn,
+    ]);
+    row._inputs = { titleInput };
+    return row;
+  }
+
+  function autoResizeTextarea(ta) {
+    ta.style.height = "auto";
+    ta.style.height = Math.max(ta.scrollHeight, 36) + "px";
+  }
+
+  function makeStepRow(text) {
+    const handle = makeDragHandle();
+    const input = el("textarea", {
+      class: "step-row__text",
+      rows: "1",
+      placeholder: T.stepPlaceholder,
+      "aria-label": T.steps,
+    });
+    input.value = text || "";
+    input.addEventListener("input", () => autoResizeTextarea(input));
+    const removeBtn = el("button", {
+      type: "button",
+      class: "btn btn--icon ing-row__remove",
+      "aria-label": T.remove,
+      title: T.remove,
+      text: "×",
+      onclick: () => row.remove(),
+    });
+    const row = el("div", { class: "step-row", "data-kind": "step" }, [
+      handle,
+      input,
+      removeBtn,
+    ]);
+    row._inputs = { input };
+    // Defer resize to next frame so the textarea is in the DOM and has a width
+    requestAnimationFrame(() => autoResizeTextarea(input));
+    return row;
+  }
+
+  function makeStepSectionRow(title) {
+    const handle = makeDragHandle();
+    const titleInput = el("input", {
+      type: "text",
+      class: "ing-section__title",
+      placeholder: T.sectionTitle,
+      value: title || "",
+      "aria-label": T.sectionTitle,
+    });
+    const removeBtn = el("button", {
+      type: "button",
+      class: "btn btn--icon ing-row__remove",
+      "aria-label": T.remove,
+      title: T.remove,
+      text: "×",
+      onclick: () => row.remove(),
+    });
+    const row = el("div", { class: "step-row step-row--section", "data-kind": "section" }, [
+      handle,
       titleInput,
       removeBtn,
     ]);
@@ -1166,7 +1319,9 @@
         row.remove();
       },
     });
+    const handle = makeDragHandle();
     const row = el("div", { class: "ing-row", "data-kind": "ingredient" }, [
+      handle,
       amountInput,
       unitInput,
       nameInput,
@@ -1245,7 +1400,13 @@
         const data = await fetchRecipeFromUrl(url);
         if (data.title) titleInput.value = data.title;
         if (Array.isArray(data.steps) && data.steps.length) {
-          stepsInput.value = data.steps.join("\n");
+          clear(stepsContainer);
+          for (const item of data.steps) {
+            if (typeof item !== "string") continue;
+            const m = item.match(/^##\s+(.*)$/);
+            if (m) stepsContainer.appendChild(makeStepSectionRow(m[1]));
+            else stepsContainer.appendChild(makeStepRow(item));
+          }
         }
         if (Array.isArray(data.ingredients) && data.ingredients.length) {
           // Replace existing ingredient rows with imported ones (mixed: ingredient + section)
@@ -1326,9 +1487,37 @@
     });
     const addRowActions = el("div", { class: "ing-list__actions" }, [addIngBtn, addSectionBtn]);
 
-    const stepsInput = el("textarea", { id: "f-steps", rows: "8" });
-    stepsInput.value =
-      existing && Array.isArray(existing.steps) ? existing.steps.join("\n") : "";
+    // Step editor (per-row, sortable)
+    const stepsContainer = el("div", { class: "step-list", id: "step-list" });
+    if (existing && Array.isArray(existing.steps)) {
+      for (const item of existing.steps) {
+        if (typeof item !== "string") continue;
+        const m = item.match(/^##\s+(.*)$/);
+        if (m) stepsContainer.appendChild(makeStepSectionRow(m[1]));
+        else stepsContainer.appendChild(makeStepRow(item));
+      }
+    }
+    const addStepBtn = el("button", {
+      type: "button",
+      class: "btn",
+      text: T.addStep,
+      onclick: () => {
+        const row = makeStepRow("");
+        stepsContainer.appendChild(row);
+        row._inputs.input.focus();
+      },
+    });
+    const addStepSectionBtn = el("button", {
+      type: "button",
+      class: "btn",
+      text: T.addSection,
+      onclick: () => {
+        const row = makeStepSectionRow("");
+        stepsContainer.appendChild(row);
+        row._inputs.titleInput.focus();
+      },
+    });
+    const addStepActions = el("div", { class: "ing-list__actions" }, [addStepBtn, addStepSectionBtn]);
 
     const urlInput = el("input", {
       type: "url",
@@ -1353,9 +1542,9 @@
       addRowActions,
     ]);
     const stepsField = el("div", { class: "form__field" }, [
-      el("label", { for: "f-steps", text: T.steps }),
-      el("span", { class: "hint", text: T.stepsHintSection }),
-      stepsInput,
+      el("label", { text: T.steps }),
+      stepsContainer,
+      addStepActions,
     ]);
     const urlField = el("div", { class: "form__field" }, [
       el("label", { for: "f-url", text: T.link }),
@@ -1388,6 +1577,9 @@
       urlField.style.display = m === "link" ? "" : "none";
     }
     setMode(mode);
+
+    makeSortable(ingContainer, { handleSelector: ".sortable-handle" });
+    makeSortable(stepsContainer, { handleSelector: ".sortable-handle" });
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -1444,6 +1636,18 @@
           }
         }
 
+        const stepRows = [];
+        for (const row of stepsContainer.children) {
+          const kind = row.getAttribute("data-kind");
+          if (kind === "section") {
+            const title = row._inputs.titleInput.value.trim();
+            if (title) stepRows.push("## " + title);
+          } else {
+            const text = row._inputs.input.value.trim();
+            if (text) stepRows.push(text);
+          }
+        }
+
         const sourceUrl = importUrlInput.value.trim();
         recipe = {
           id: existing ? existing.id : uuid(),
@@ -1451,7 +1655,7 @@
           title,
           description,
           ingredients: ingRows,
-          steps: splitLines(stepsInput.value),
+          steps: stepRows,
           sourceUrl: isValidHttpUrl(sourceUrl) ? sourceUrl : "",
           createdAt: existing ? existing.createdAt : now,
           updatedAt: now,
