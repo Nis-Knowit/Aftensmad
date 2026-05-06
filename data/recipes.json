@@ -1,17 +1,25 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-06T17:56:08.605Z",
+  "exportedAt": "2026-05-06T17:56:38.085Z",
   "recipes": [
     {
       "id": "94f9b69a-29ee-4162-addf-9ac2379dbcd1",
       "type": "manual",
       "title": "Wraps",
       "description": "",
-      "ingredients": [],
+      "ingredients": [
+        {
+          "kind": "ingredient",
+          "ingredientId": "0a103535-dac2-4fb5-8bbc-5e5c398ff60c",
+          "amount": 1,
+          "unit": "pakke",
+          "note": ""
+        }
+      ],
       "steps": [],
       "sourceUrl": "",
       "createdAt": 1778090148270,
-      "updatedAt": 1778090161751
+      "updatedAt": 1778090195744
     },
     {
       "id": "810737d8-dce2-4017-a83b-44ba647060b9",
@@ -614,6 +622,12 @@
       "name": "Siracha mayo",
       "createdAt": 1778071774972,
       "updatedAt": 1778071774972
+    },
+    {
+      "id": "0a103535-dac2-4fb5-8bbc-5e5c398ff60c",
+      "name": "Wraps",
+      "createdAt": 1778090195744,
+      "updatedAt": 1778090195744
     }
   ]
 }
