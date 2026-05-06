@@ -1,7 +1,18 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-06T17:59:33.656Z",
+  "exportedAt": "2026-05-06T18:01:40.411Z",
   "recipes": [
+    {
+      "id": "63ddf881-2930-4a7c-b427-7a9e4304a760",
+      "type": "manual",
+      "title": "Rugbrød med lækker pålæg",
+      "description": "",
+      "ingredients": [],
+      "steps": [],
+      "sourceUrl": "",
+      "createdAt": 1778090498502,
+      "updatedAt": 1778090498502
+    },
     {
       "id": "b2f4d77b-80ba-4692-be0c-5e0c6aa65041",
       "type": "manual",
