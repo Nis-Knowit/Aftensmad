@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-06T17:52:30.151Z",
+  "exportedAt": "2026-05-06T17:53:00.171Z",
   "recipes": [
     {
       "id": "519b0e5b-a785-4208-8012-565b4a821d67",
@@ -323,6 +323,96 @@
   ],
   "ingredients": [
     {
+      "id": "bd05c95c-478a-4d24-9bd4-8aa1c3b9bc53",
+      "name": "hvidløg",
+      "createdAt": 1778070254813,
+      "updatedAt": 1778070254813
+    },
+    {
+      "id": "8a1dc16d-45cb-48c9-964d-f3a5c7e900fc",
+      "name": "ingefær",
+      "createdAt": 1778070254813,
+      "updatedAt": 1778070254813
+    },
+    {
+      "id": "85a5c922-0eae-4e79-8c20-175c644bdf2e",
+      "name": "mediumstærk karry",
+      "createdAt": 1778070254813,
+      "updatedAt": 1778070254813
+    },
+    {
+      "id": "7e1545d3-3624-4e3d-a77a-ff63b9b36acc",
+      "name": "stødt spidskommen",
+      "createdAt": 1778070254813,
+      "updatedAt": 1778070254813
+    },
+    {
+      "id": "33311916-cda5-4a60-b246-c1046c6429eb",
+      "name": "koriander",
+      "createdAt": 1778070254813,
+      "updatedAt": 1778070254813
+    },
+    {
+      "id": "44d90133-eebd-48ef-8541-c94167dce3e3",
+      "name": "kardemomme",
+      "createdAt": 1778070254813,
+      "updatedAt": 1778070254813
+    },
+    {
+      "id": "e560ae08-9e9a-4f2a-9dbb-21f7e717a8e9",
+      "name": "chiliflager",
+      "createdAt": 1778070254813,
+      "updatedAt": 1778070254813
+    },
+    {
+      "id": "c2a75204-f03a-4d96-9391-801152fe8cd0",
+      "name": "grøntsagsbouillon",
+      "createdAt": 1778070254813,
+      "updatedAt": 1778070254813
+    },
+    {
+      "id": "5b60e1a7-8b16-4ce9-82fd-531d5239ee3e",
+      "name": "røde linser",
+      "createdAt": 1778070254813,
+      "updatedAt": 1778070254813
+    },
+    {
+      "id": "7464883f-720c-4396-ae39-39428792419f",
+      "name": "hakkede tomater",
+      "createdAt": 1778070254813,
+      "updatedAt": 1778070254813
+    },
+    {
+      "id": "d709c420-68d4-4ecb-85ff-a89d2acbe6b9",
+      "name": "olivenolie",
+      "createdAt": 1778070254813,
+      "updatedAt": 1778070254813
+    },
+    {
+      "id": "7740dc45-18e0-4ed2-bf98-d61cf932e137",
+      "name": "græsk yoghurt 10 %",
+      "createdAt": 1778070254814,
+      "updatedAt": 1778070254814
+    },
+    {
+      "id": "0d763e9a-af15-4974-9c0a-455fb920f00b",
+      "name": "agurk",
+      "createdAt": 1778070254814,
+      "updatedAt": 1778070254814
+    },
+    {
+      "id": "a9cb457c-edcf-456d-a56b-db15b98328b2",
+      "name": "spidskommen",
+      "createdAt": 1778070254814,
+      "updatedAt": 1778070254814
+    },
+    {
+      "id": "405c33a1-531c-436a-902d-fba25d7cde08",
+      "name": "salt og friskkværnet peber",
+      "createdAt": 1778070254814,
+      "updatedAt": 1778070254814
+    },
+    {
       "id": "ff75cada-0d16-49a5-9df8-f687212805f9",
       "name": "hvidløg",
       "createdAt": 1778071154443,
@@ -513,96 +603,6 @@
       "name": "Siracha mayo",
       "createdAt": 1778071774972,
       "updatedAt": 1778071774972
-    },
-    {
-      "id": "bd05c95c-478a-4d24-9bd4-8aa1c3b9bc53",
-      "name": "hvidløg",
-      "createdAt": 1778070254813,
-      "updatedAt": 1778070254813
-    },
-    {
-      "id": "8a1dc16d-45cb-48c9-964d-f3a5c7e900fc",
-      "name": "ingefær",
-      "createdAt": 1778070254813,
-      "updatedAt": 1778070254813
-    },
-    {
-      "id": "85a5c922-0eae-4e79-8c20-175c644bdf2e",
-      "name": "mediumstærk karry",
-      "createdAt": 1778070254813,
-      "updatedAt": 1778070254813
-    },
-    {
-      "id": "7e1545d3-3624-4e3d-a77a-ff63b9b36acc",
-      "name": "stødt spidskommen",
-      "createdAt": 1778070254813,
-      "updatedAt": 1778070254813
-    },
-    {
-      "id": "33311916-cda5-4a60-b246-c1046c6429eb",
-      "name": "koriander",
-      "createdAt": 1778070254813,
-      "updatedAt": 1778070254813
-    },
-    {
-      "id": "44d90133-eebd-48ef-8541-c94167dce3e3",
-      "name": "kardemomme",
-      "createdAt": 1778070254813,
-      "updatedAt": 1778070254813
-    },
-    {
-      "id": "e560ae08-9e9a-4f2a-9dbb-21f7e717a8e9",
-      "name": "chiliflager",
-      "createdAt": 1778070254813,
-      "updatedAt": 1778070254813
-    },
-    {
-      "id": "c2a75204-f03a-4d96-9391-801152fe8cd0",
-      "name": "grøntsagsbouillon",
-      "createdAt": 1778070254813,
-      "updatedAt": 1778070254813
-    },
-    {
-      "id": "5b60e1a7-8b16-4ce9-82fd-531d5239ee3e",
-      "name": "røde linser",
-      "createdAt": 1778070254813,
-      "updatedAt": 1778070254813
-    },
-    {
-      "id": "7464883f-720c-4396-ae39-39428792419f",
-      "name": "hakkede tomater",
-      "createdAt": 1778070254813,
-      "updatedAt": 1778070254813
-    },
-    {
-      "id": "d709c420-68d4-4ecb-85ff-a89d2acbe6b9",
-      "name": "olivenolie",
-      "createdAt": 1778070254813,
-      "updatedAt": 1778070254813
-    },
-    {
-      "id": "7740dc45-18e0-4ed2-bf98-d61cf932e137",
-      "name": "græsk yoghurt 10 %",
-      "createdAt": 1778070254814,
-      "updatedAt": 1778070254814
-    },
-    {
-      "id": "0d763e9a-af15-4974-9c0a-455fb920f00b",
-      "name": "agurk",
-      "createdAt": 1778070254814,
-      "updatedAt": 1778070254814
-    },
-    {
-      "id": "a9cb457c-edcf-456d-a56b-db15b98328b2",
-      "name": "spidskommen",
-      "createdAt": 1778070254814,
-      "updatedAt": 1778070254814
-    },
-    {
-      "id": "405c33a1-531c-436a-902d-fba25d7cde08",
-      "name": "salt og friskkværnet peber",
-      "createdAt": 1778070254814,
-      "updatedAt": 1778070254814
     }
   ]
 }
