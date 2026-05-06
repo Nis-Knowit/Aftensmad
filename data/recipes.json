@@ -1,7 +1,320 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-06T17:25:10.798Z",
+  "exportedAt": "2026-05-06T17:26:30.067Z",
   "recipes": [
+    {
+      "id": "810737d8-dce2-4017-a83b-44ba647060b9",
+      "type": "manual",
+      "title": "Poke ball",
+      "description": "",
+      "ingredients": [
+        {
+          "kind": "ingredient",
+          "ingredientId": "79381e3d-8d8f-4155-b5af-35b0f74aea5a",
+          "amount": 150,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "5c091a6d-d14e-478a-907f-948cbae8841b",
+          "amount": 1,
+          "unit": "pakke",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "f408b4f8-8531-4f1e-9366-7bf5960f559d",
+          "amount": 1,
+          "unit": "pakke",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "be415368-794f-44cf-9541-3481e51b3f59",
+          "amount": 4,
+          "unit": "stk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "39433400-acfb-42bd-bd83-52f8a980c777",
+          "amount": 1,
+          "unit": "stk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "95196bbb-c390-42e6-9d25-d8deeeb6d449",
+          "amount": 1,
+          "unit": "stk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "b7aa2ded-f933-44bb-b982-2bc406f03795",
+          "amount": 150,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8873df58-ea74-43ee-b109-42abbfba1d44",
+          "amount": 1,
+          "unit": "stk",
+          "note": ""
+        }
+      ],
+      "steps": [
+        "Kog ris",
+        "Bag kikærter i airfryer med paprika og krydderier",
+        "Steg halloumi på pande i tynde skiver",
+        "Snit grønt",
+        "Server med mayo til"
+      ],
+      "sourceUrl": "",
+      "createdAt": 1778071774971,
+      "updatedAt": 1778071774971
+    },
+    {
+      "id": "601bc215-58ba-4b29-b865-6e33082937c4",
+      "type": "manual",
+      "title": "Kartoffelpizza",
+      "description": "",
+      "ingredients": [
+        {
+          "kind": "section",
+          "title": "Pizzadej"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "d4ef5658-e250-4903-8df8-d09989edd62d",
+          "amount": 2,
+          "unit": "stk",
+          "note": ""
+        },
+        {
+          "kind": "section",
+          "title": "Topping"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "07779051-f37a-4adf-94d8-e43fed9eb5cf",
+          "amount": 300,
+          "unit": "g",
+          "note": "skåret i tynde skiver"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "dffa7d28-b274-4038-b3d9-39a4bb165748",
+          "amount": 250,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "a7c5f88a-c78d-4871-864a-53c1ced79440",
+          "amount": 2,
+          "unit": "tsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "de33f8e5-6225-41cc-84bb-addb901b3850",
+          "amount": 2,
+          "unit": "spsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "7aacc598-8e87-42fd-93ac-ced63624ef5f",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "2ce79726-7b31-4501-af15-2d191f514c2e",
+          "amount": 250,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8078cf8f-cc0b-4c88-9ca6-09806751ab91",
+          "amount": 1,
+          "unit": "stk",
+          "note": ""
+        }
+      ],
+      "steps": [
+        "Snit løg og kartofler i tynde skiver",
+        "Put kartofler i en skål",
+        "Hæld kogende vand over dem og lad stå 5 min",
+        "Smør mascarpone på bundende",
+        "Fordel kartoflerne og løg på pizzaen",
+        "Top med mozarella og rosmarin",
+        "Bag til gylden",
+        "Drys med salt før servering"
+      ],
+      "sourceUrl": "https://www.valdemarsro.dk/hvid-pizza-med-kartoffel-og-rosmarin/",
+      "createdAt": 1778071500209,
+      "updatedAt": 1778071532032
+    },
+    {
+      "id": "f856e969-7f84-4a28-aa17-be4c10ca841b",
+      "type": "manual",
+      "title": "Indisk Dhal med raita",
+      "description": "",
+      "ingredients": [
+        {
+          "kind": "ingredient",
+          "ingredientId": "ff75cada-0d16-49a5-9df8-f687212805f9",
+          "amount": 4,
+          "unit": "fed",
+          "note": "finthakket"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "a15146d7-c964-4688-9b85-d9730e5a736a",
+          "amount": 2,
+          "unit": "spsk",
+          "note": "frisk, fintrevet"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "029f30e3-4f35-4c39-8a35-15b61c33ad10",
+          "amount": 3,
+          "unit": "tsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "2198e08f-e24c-4b51-aaf7-a63c46c177d3",
+          "amount": 1,
+          "unit": "spsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "d82a0b9c-4784-4bf2-b2d8-57c238bf295c",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "51acd06c-0f49-4b14-9770-b57615fa2aa3",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "71c039d6-a862-4f86-8045-c410d0a6b03e",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "2e217b8d-f553-4ea7-9dca-f3a02b077e72",
+          "amount": 6,
+          "unit": "dl",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "1be6008b-69c5-4bc7-871c-5cba0837a73a",
+          "amount": 200,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "7a90d284-f529-4f85-8e49-f9c3dddedb32",
+          "amount": 800,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "de33f8e5-6225-41cc-84bb-addb901b3850",
+          "amount": 2,
+          "unit": "spsk",
+          "note": ""
+        },
+        {
+          "kind": "section",
+          "title": "Raita"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "e652e118-5934-4d4a-9bc4-d5e9ebd01fbf",
+          "amount": 1,
+          "unit": "",
+          "note": "finthakket"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "e4204a04-1434-4152-82ef-58942154a970",
+          "amount": 2,
+          "unit": "dl",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "c5c947f8-6886-47c4-afce-f82abb221a2e",
+          "amount": null,
+          "unit": "",
+          "note": "groftrevet"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "ff75cada-0d16-49a5-9df8-f687212805f9",
+          "amount": 1,
+          "unit": "fed",
+          "note": "presset"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "29950547-3451-4ef5-a13a-2215f4e57b46",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "7aacc598-8e87-42fd-93ac-ced63624ef5f",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        },
+        {
+          "kind": "section",
+          "title": "Tilbehør og toppings"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "cbc87b3d-8c63-4c92-95f8-20a339e65569",
+          "amount": 1,
+          "unit": "",
+          "note": ""
+        }
+      ],
+      "steps": [
+        "Varm olien i en stor gryde ved middelvarme og tilsæt hvidløg og ingefær og rør rundt i 1 minut.",
+        "Tilsæt herefter karry, spidskommen, kardemomme, koriander, og chiliflager og svits krydderierne af i et minuts tid under omrøring.",
+        "Skyl linserne i en sigte og kom dem i gryden sammen med grøntsagsbouillon og hakkede tomater.",
+        "Lad det simre under låg i 30-45 minutter. Rør jævnligt i gryden og tilsæt eventuelt lidt ekstra grøntsagsbouillon, hvis den bliver for fast. Smag til med salt og server retten i dybe skåle med koriander på toppen.",
+        "Server kølig raita.",
+        "## Raita",
+        "Rør alle ingredienserne til raita sammen og smag til."
+      ],
+      "sourceUrl": "https://www.valdemarsro.dk/dhal/",
+      "createdAt": 1778071154443,
+      "updatedAt": 1778071154443
+    },
     {
       "id": "519b0e5b-a785-4208-8012-565b4a821d67",
       "type": "manual",
@@ -113,6 +426,198 @@
     }
   ],
   "ingredients": [
+    {
+      "id": "ff75cada-0d16-49a5-9df8-f687212805f9",
+      "name": "hvidløg",
+      "createdAt": 1778071154443,
+      "updatedAt": 1778071154443
+    },
+    {
+      "id": "a15146d7-c964-4688-9b85-d9730e5a736a",
+      "name": "ingefær",
+      "createdAt": 1778071154443,
+      "updatedAt": 1778071154443
+    },
+    {
+      "id": "029f30e3-4f35-4c39-8a35-15b61c33ad10",
+      "name": "mediumstærk karry",
+      "createdAt": 1778071154443,
+      "updatedAt": 1778071154443
+    },
+    {
+      "id": "2198e08f-e24c-4b51-aaf7-a63c46c177d3",
+      "name": "stødt spidskommen",
+      "createdAt": 1778071154443,
+      "updatedAt": 1778071154443
+    },
+    {
+      "id": "d82a0b9c-4784-4bf2-b2d8-57c238bf295c",
+      "name": "½ spsk stødt koriander",
+      "createdAt": 1778071154443,
+      "updatedAt": 1778071154443
+    },
+    {
+      "id": "51acd06c-0f49-4b14-9770-b57615fa2aa3",
+      "name": "½ tsk stødt kardemomme",
+      "createdAt": 1778071154443,
+      "updatedAt": 1778071154443
+    },
+    {
+      "id": "71c039d6-a862-4f86-8045-c410d0a6b03e",
+      "name": "½ tsk chiliflager",
+      "createdAt": 1778071154443,
+      "updatedAt": 1778071154443
+    },
+    {
+      "id": "2e217b8d-f553-4ea7-9dca-f3a02b077e72",
+      "name": "grøntsagsbouillon",
+      "createdAt": 1778071154444,
+      "updatedAt": 1778071154444
+    },
+    {
+      "id": "1be6008b-69c5-4bc7-871c-5cba0837a73a",
+      "name": "røde linser",
+      "createdAt": 1778071154444,
+      "updatedAt": 1778071154444
+    },
+    {
+      "id": "7a90d284-f529-4f85-8e49-f9c3dddedb32",
+      "name": "hakkede tomater på dåse",
+      "createdAt": 1778071154444,
+      "updatedAt": 1778071154444
+    },
+    {
+      "id": "de33f8e5-6225-41cc-84bb-addb901b3850",
+      "name": "olivenolie",
+      "createdAt": 1778071154444,
+      "updatedAt": 1778071154444
+    },
+    {
+      "id": "e652e118-5934-4d4a-9bc4-d5e9ebd01fbf",
+      "name": "håndfuld frisk mynte",
+      "createdAt": 1778071154444,
+      "updatedAt": 1778071154444
+    },
+    {
+      "id": "e4204a04-1434-4152-82ef-58942154a970",
+      "name": "græsk yoghurt 10 %",
+      "createdAt": 1778071154444,
+      "updatedAt": 1778071154444
+    },
+    {
+      "id": "c5c947f8-6886-47c4-afce-f82abb221a2e",
+      "name": "½ agurk",
+      "createdAt": 1778071154444,
+      "updatedAt": 1778071154444
+    },
+    {
+      "id": "29950547-3451-4ef5-a13a-2215f4e57b46",
+      "name": "½ tsk stødt spidskommen",
+      "createdAt": 1778071154444,
+      "updatedAt": 1778071154444
+    },
+    {
+      "id": "7aacc598-8e87-42fd-93ac-ced63624ef5f",
+      "name": "salt og friskkværnet peber",
+      "createdAt": 1778071154444,
+      "updatedAt": 1778071154444
+    },
+    {
+      "id": "cbc87b3d-8c63-4c92-95f8-20a339e65569",
+      "name": "håndfuld frisk koriander",
+      "createdAt": 1778071154444,
+      "updatedAt": 1778071154444
+    },
+    {
+      "id": "d4ef5658-e250-4903-8df8-d09989edd62d",
+      "name": "Pizzabunde",
+      "createdAt": 1778071500210,
+      "updatedAt": 1778071500210
+    },
+    {
+      "id": "07779051-f37a-4adf-94d8-e43fed9eb5cf",
+      "name": "kartofler",
+      "createdAt": 1778071500210,
+      "updatedAt": 1778071500210
+    },
+    {
+      "id": "dffa7d28-b274-4038-b3d9-39a4bb165748",
+      "name": "frisk mozzarella",
+      "createdAt": 1778071500210,
+      "updatedAt": 1778071500210
+    },
+    {
+      "id": "fd60cb36-4577-4b0b-a8f3-7e81da184c07",
+      "name": "stængler frisk rosmarin",
+      "createdAt": 1778071500210,
+      "updatedAt": 1778071500210
+    },
+    {
+      "id": "2ce79726-7b31-4501-af15-2d191f514c2e",
+      "name": "Mascarpone",
+      "createdAt": 1778071500210,
+      "updatedAt": 1778071500210
+    },
+    {
+      "id": "8078cf8f-cc0b-4c88-9ca6-09806751ab91",
+      "name": "Løg",
+      "createdAt": 1778071500214,
+      "updatedAt": 1778071500214
+    },
+    {
+      "id": "a7c5f88a-c78d-4871-864a-53c1ced79440",
+      "name": "rosmarin",
+      "createdAt": 1778071532033,
+      "updatedAt": 1778071532033
+    },
+    {
+      "id": "79381e3d-8d8f-4155-b5af-35b0f74aea5a",
+      "name": "Ris",
+      "createdAt": 1778071774972,
+      "updatedAt": 1778071774972
+    },
+    {
+      "id": "5c091a6d-d14e-478a-907f-948cbae8841b",
+      "name": "Halloumi",
+      "createdAt": 1778071774972,
+      "updatedAt": 1778071774972
+    },
+    {
+      "id": "f408b4f8-8531-4f1e-9366-7bf5960f559d",
+      "name": "Kikærter",
+      "createdAt": 1778071774972,
+      "updatedAt": 1778071774972
+    },
+    {
+      "id": "be415368-794f-44cf-9541-3481e51b3f59",
+      "name": "Tomater",
+      "createdAt": 1778071774972,
+      "updatedAt": 1778071774972
+    },
+    {
+      "id": "39433400-acfb-42bd-bd83-52f8a980c777",
+      "name": "Spidskål",
+      "createdAt": 1778071774972,
+      "updatedAt": 1778071774972
+    },
+    {
+      "id": "95196bbb-c390-42e6-9d25-d8deeeb6d449",
+      "name": "Æble",
+      "createdAt": 1778071774972,
+      "updatedAt": 1778071774972
+    },
+    {
+      "id": "b7aa2ded-f933-44bb-b982-2bc406f03795",
+      "name": "Eddermame bønner",
+      "createdAt": 1778071774972,
+      "updatedAt": 1778071774972
+    },
+    {
+      "id": "8873df58-ea74-43ee-b109-42abbfba1d44",
+      "name": "Siracha mayo",
+      "createdAt": 1778071774972,
+      "updatedAt": 1778071774972
+    },
     {
       "id": "bd05c95c-478a-4d24-9bd4-8aa1c3b9bc53",
       "name": "hvidløg",
