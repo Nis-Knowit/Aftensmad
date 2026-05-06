@@ -1,7 +1,12 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-06T17:51:22.620Z",
+  "exportedAt": "2026-05-06T17:51:36.640Z",
   "recipes": [
+    {
+      "id": "519b0e5b-a785-4208-8012-565b4a821d67",
+      "deletedAt": 1778089896202,
+      "updatedAt": 1778089896202
+    },
     {
       "id": "810737d8-dce2-4017-a83b-44ba647060b9",
       "type": "manual",
@@ -314,115 +319,6 @@
       "sourceUrl": "https://www.valdemarsro.dk/dhal/",
       "createdAt": 1778071154443,
       "updatedAt": 1778071154443
-    },
-    {
-      "id": "519b0e5b-a785-4208-8012-565b4a821d67",
-      "type": "manual",
-      "title": "Indisk Dhal med raita",
-      "description": "",
-      "ingredients": [
-        {
-          "ingredientId": "bd05c95c-478a-4d24-9bd4-8aa1c3b9bc53",
-          "amount": 4,
-          "unit": "fed",
-          "note": "finthakket"
-        },
-        {
-          "ingredientId": "8a1dc16d-45cb-48c9-964d-f3a5c7e900fc",
-          "amount": 2,
-          "unit": "spsk",
-          "note": "frisk, fintrevet"
-        },
-        {
-          "ingredientId": "85a5c922-0eae-4e79-8c20-175c644bdf2e",
-          "amount": 3,
-          "unit": "tsk",
-          "note": ""
-        },
-        {
-          "ingredientId": "7e1545d3-3624-4e3d-a77a-ff63b9b36acc",
-          "amount": 1,
-          "unit": "spsk",
-          "note": ""
-        },
-        {
-          "ingredientId": "33311916-cda5-4a60-b246-c1046c6429eb",
-          "amount": null,
-          "unit": "spsk",
-          "note": ""
-        },
-        {
-          "ingredientId": "44d90133-eebd-48ef-8541-c94167dce3e3",
-          "amount": null,
-          "unit": "tsk",
-          "note": ""
-        },
-        {
-          "ingredientId": "e560ae08-9e9a-4f2a-9dbb-21f7e717a8e9",
-          "amount": null,
-          "unit": "tsk",
-          "note": ""
-        },
-        {
-          "ingredientId": "c2a75204-f03a-4d96-9391-801152fe8cd0",
-          "amount": 6,
-          "unit": "dl",
-          "note": ""
-        },
-        {
-          "ingredientId": "5b60e1a7-8b16-4ce9-82fd-531d5239ee3e",
-          "amount": 200,
-          "unit": "g",
-          "note": ""
-        },
-        {
-          "ingredientId": "7464883f-720c-4396-ae39-39428792419f",
-          "amount": 800,
-          "unit": "g",
-          "note": ""
-        },
-        {
-          "ingredientId": "d709c420-68d4-4ecb-85ff-a89d2acbe6b9",
-          "amount": 2,
-          "unit": "spsk",
-          "note": ""
-        },
-        {
-          "ingredientId": "7740dc45-18e0-4ed2-bf98-d61cf932e137",
-          "amount": 2,
-          "unit": "dl",
-          "note": ""
-        },
-        {
-          "ingredientId": "0d763e9a-af15-4974-9c0a-455fb920f00b",
-          "amount": null,
-          "unit": "stk",
-          "note": "groftrevet"
-        },
-        {
-          "ingredientId": "bd05c95c-478a-4d24-9bd4-8aa1c3b9bc53",
-          "amount": 1,
-          "unit": "fed",
-          "note": "presset"
-        },
-        {
-          "ingredientId": "405c33a1-531c-436a-902d-fba25d7cde08",
-          "amount": null,
-          "unit": "",
-          "note": ""
-        }
-      ],
-      "steps": [
-        "Varm olien i en stor gryde ved middelvarme og tilsæt hvidløg og ingefær og rør rundt i 1 minut.",
-        "Tilsæt herefter karry, spidskommen, kardemomme, koriander, og chiliflager og svits krydderierne af i et minuts tid under omrøring.",
-        "Skyl linserne i en sigte og kom dem i gryden sammen med grøntsagsbouillon og hakkede tomater.",
-        "Lad det simre under låg i 30-45 minutter. Rør jævnligt i gryden og tilsæt eventuelt lidt ekstra grøntsagsbouillon, hvis den bliver for fast. Smag til med salt og server retten i dybe skåle med koriander på toppen.",
-        "Server kølig raita.",
-        "Raita Rør alle ingredienserne til raita sammen og smag til."
-      ],
-      "sourceUrl": "https://www.valdemarsro.dk/dhal/",
-      "createdAt": 1778070254812,
-      "updatedAt": 1778070304152
     }
   ],
   "ingredients": [
