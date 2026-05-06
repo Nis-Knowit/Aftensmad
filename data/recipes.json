@@ -1,7 +1,87 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-06T18:01:40.411Z",
+  "exportedAt": "2026-05-06T18:02:22.298Z",
   "recipes": [
+    {
+      "id": "87730cc8-3a6c-4f30-be3c-58cd4b54e390",
+      "type": "manual",
+      "title": "Pasta med laks og fløde",
+      "description": "",
+      "ingredients": [
+        {
+          "kind": "ingredient",
+          "ingredientId": "91928a0c-b0d0-491f-8230-9a34a36fe4e7",
+          "amount": 500,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "6c5e383c-7183-4709-9e71-b27815ae3f55",
+          "amount": 30,
+          "unit": "g",
+          "note": "finthakket"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "379c6a80-776c-4ae5-956a-12a4b5b92710",
+          "amount": 400,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8078cf8f-cc0b-4c88-9ca6-09806751ab91",
+          "amount": 1,
+          "unit": "",
+          "note": "finthakket"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "bd05c95c-478a-4d24-9bd4-8aa1c3b9bc53",
+          "amount": 2,
+          "unit": "fed",
+          "note": "finthakket"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "fc70ceb4-5f99-4eb0-b541-9e3e17fcbc16",
+          "amount": 1,
+          "unit": "dl",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "a3d59573-6e3a-43f4-96f5-30617bdb5f67",
+          "amount": 1,
+          "unit": "",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "d709c420-68d4-4ecb-85ff-a89d2acbe6b9",
+          "amount": 1,
+          "unit": "spsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "405c33a1-531c-436a-902d-fba25d7cde08",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        }
+      ],
+      "steps": [
+        "Kom laksefiletter på en bageplade med bagepapir. Drys med salt og peber og bag dem i en forvarmet ovn ved 175 grader varmluft i 10 minutter. Drys finthakkede mandler på og bag videre i cirka 5 minutter eller til laksen er lige knap færdigtilberedt.",
+        "Kog imens pasta efter anvisning på pakken.",
+        "Sauter løg og hvidløg på en pande til det er blødt og klart. Tilsæt fløden og lad den bruse af og koge lidt ind. Fjern skindet fra den næsten færdigtilberedte laks og kom laksen på panden med flødesaucen, lad den simre med i et lille minutstid til den er færdig og smag godt til med salt, peber og finthakket basilikum.",
+        "Vend den varme pasta med flødesaucen og fordel resten af saucen og laksen over på tallerkener."
+      ],
+      "sourceUrl": "https://www.valdemarsro.dk/nem-pastaret-med-laks-og-basilikum/",
+      "createdAt": 1778090540107,
+      "updatedAt": 1778090540107
+    },
     {
       "id": "63ddf881-2930-4a7c-b427-7a9e4304a760",
       "type": "manual",
@@ -1138,6 +1218,30 @@
       "name": "frossen spinat",
       "createdAt": 1778090371729,
       "updatedAt": 1778090371729
+    },
+    {
+      "id": "6c5e383c-7183-4709-9e71-b27815ae3f55",
+      "name": "mandler",
+      "createdAt": 1778090540107,
+      "updatedAt": 1778090540107
+    },
+    {
+      "id": "379c6a80-776c-4ae5-956a-12a4b5b92710",
+      "name": "pasta",
+      "createdAt": 1778090540108,
+      "updatedAt": 1778090540108
+    },
+    {
+      "id": "fc70ceb4-5f99-4eb0-b541-9e3e17fcbc16",
+      "name": "piskefløde",
+      "createdAt": 1778090540108,
+      "updatedAt": 1778090540108
+    },
+    {
+      "id": "a3d59573-6e3a-43f4-96f5-30617bdb5f67",
+      "name": "håndfuld frisk basilikum",
+      "createdAt": 1778090540108,
+      "updatedAt": 1778090540108
     }
   ]
 }
