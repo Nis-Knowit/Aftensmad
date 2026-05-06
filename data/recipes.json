@@ -1,17 +1,17 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-06T17:55:50.224Z",
+  "exportedAt": "2026-05-06T17:56:03.742Z",
   "recipes": [
     {
       "id": "94f9b69a-29ee-4162-addf-9ac2379dbcd1",
       "type": "manual",
       "title": "Wraps",
-      "description": "Wraps med noget i!",
+      "description": "",
       "ingredients": [],
       "steps": [],
       "sourceUrl": "",
       "createdAt": 1778090148270,
-      "updatedAt": 1778090148270
+      "updatedAt": 1778090161751
     },
     {
       "id": "810737d8-dce2-4017-a83b-44ba647060b9",
