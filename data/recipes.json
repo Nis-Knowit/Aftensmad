@@ -1,7 +1,96 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-06T17:57:15.292Z",
+  "exportedAt": "2026-05-06T17:58:51.275Z",
   "recipes": [
+    {
+      "id": "2664ee50-d7d6-4646-9ebe-bcd61d8af642",
+      "type": "manual",
+      "title": "Spinatsuppe med kylling",
+      "description": "",
+      "ingredients": [
+        {
+          "kind": "ingredient",
+          "ingredientId": "394a9f53-f4af-4f77-9548-1e38f2e535bb",
+          "amount": 400,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8078cf8f-cc0b-4c88-9ca6-09806751ab91",
+          "amount": 1,
+          "unit": "stk.",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "bd05c95c-478a-4d24-9bd4-8aa1c3b9bc53",
+          "amount": 2,
+          "unit": "fed",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "88730f09-dc71-4315-8bc9-be14c64ade62",
+          "amount": 2,
+          "unit": "spsk.",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "24f59b25-efdd-4808-b96c-25b40a8adf90",
+          "amount": 1,
+          "unit": "spsk.",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "b22f3e20-d5ab-4e98-9e6e-1caf00136ce3",
+          "amount": 2,
+          "unit": "stk.",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "d0a4c2ed-6ed2-416a-9648-709038de251e",
+          "amount": 1,
+          "unit": "spsk.",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "18354b30-c142-439f-a7f9-9678c10b2d14",
+          "amount": 1,
+          "unit": "spsk.",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "245a1022-f040-4b79-a7fe-49aae434ac74",
+          "amount": 1,
+          "unit": "l",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "a95e7c14-c90f-4d1d-878d-ae587d76d2f0",
+          "amount": 200,
+          "unit": "g",
+          "note": ""
+        }
+      ],
+      "steps": [
+        "Skær kyllingefileten i strimler.",
+        "Hak løg og hvidløg fint.",
+        "Bland kylling, løg, hvidløg, soja, sesamfrø, peber og muscovadoråsukker og lad det hvile i 30 min.",
+        "Varm olien op i en sauterpande og svits kyllinge-blandingen til kødet har taget farve.",
+        "Tilsæt bouillon og lad suppen koge et par min.",
+        "Tilsæt spinaten og kog yderligere et par min."
+      ],
+      "sourceUrl": "https://opskrifter.coop.dk/opskrifter/spinatsuppe-med-kylling-5413",
+      "createdAt": 1778090329338,
+      "updatedAt": 1778090329338
+    },
     {
       "id": "a77625f3-4c99-4908-a5ef-545c6f098a9d",
       "type": "manual",
@@ -818,6 +907,54 @@
       "name": "håndfuld bredbladet persille",
       "createdAt": 1778090233281,
       "updatedAt": 1778090233281
+    },
+    {
+      "id": "394a9f53-f4af-4f77-9548-1e38f2e535bb",
+      "name": "Kyllingefilet",
+      "createdAt": 1778090329339,
+      "updatedAt": 1778090329339
+    },
+    {
+      "id": "88730f09-dc71-4315-8bc9-be14c64ade62",
+      "name": "Coop soja",
+      "createdAt": 1778090329339,
+      "updatedAt": 1778090329339
+    },
+    {
+      "id": "24f59b25-efdd-4808-b96c-25b40a8adf90",
+      "name": "sesamfrø",
+      "createdAt": 1778090329340,
+      "updatedAt": 1778090329340
+    },
+    {
+      "id": "b22f3e20-d5ab-4e98-9e6e-1caf00136ce3",
+      "name": "knsp sort peber",
+      "createdAt": 1778090329340,
+      "updatedAt": 1778090329340
+    },
+    {
+      "id": "d0a4c2ed-6ed2-416a-9648-709038de251e",
+      "name": "mørk muscovadoråsukker",
+      "createdAt": 1778090329340,
+      "updatedAt": 1778090329340
+    },
+    {
+      "id": "18354b30-c142-439f-a7f9-9678c10b2d14",
+      "name": "Coop rapsolie",
+      "createdAt": 1778090329340,
+      "updatedAt": 1778090329340
+    },
+    {
+      "id": "245a1022-f040-4b79-a7fe-49aae434ac74",
+      "name": "kyllingebouillon",
+      "createdAt": 1778090329340,
+      "updatedAt": 1778090329340
+    },
+    {
+      "id": "a95e7c14-c90f-4d1d-878d-ae587d76d2f0",
+      "name": "frisk spinat",
+      "createdAt": 1778090329340,
+      "updatedAt": 1778090329340
     }
   ]
 }
