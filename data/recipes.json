@@ -1,7 +1,155 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-06T17:56:38.085Z",
+  "exportedAt": "2026-05-06T17:57:15.292Z",
   "recipes": [
+    {
+      "id": "a77625f3-4c99-4908-a5ef-545c6f098a9d",
+      "type": "manual",
+      "title": "Kikærtegryde med linser og kokosmælk",
+      "description": "",
+      "ingredients": [
+        {
+          "kind": "ingredient",
+          "ingredientId": "85a5c922-0eae-4e79-8c20-175c644bdf2e",
+          "amount": 3,
+          "unit": "tsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "7e1545d3-3624-4e3d-a77a-ff63b9b36acc",
+          "amount": 2,
+          "unit": "tsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8104ca75-0cad-487d-83f8-f8e59c0b4b9d",
+          "amount": 1,
+          "unit": "tsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "dfca5e9c-f802-421d-931c-615a7bb8b4dc",
+          "amount": 1,
+          "unit": "tsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8078cf8f-cc0b-4c88-9ca6-09806751ab91",
+          "amount": 1,
+          "unit": "",
+          "note": "finthakket"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "bd05c95c-478a-4d24-9bd4-8aa1c3b9bc53",
+          "amount": 4,
+          "unit": "fed",
+          "note": "finthakkede"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8a1dc16d-45cb-48c9-964d-f3a5c7e900fc",
+          "amount": 1,
+          "unit": "tsk",
+          "note": "fintrevet"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "5b60e1a7-8b16-4ce9-82fd-531d5239ee3e",
+          "amount": 150,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "c2a75204-f03a-4d96-9391-801152fe8cd0",
+          "amount": 3,
+          "unit": "dl",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "7a90d284-f529-4f85-8e49-f9c3dddedb32",
+          "amount": 400,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "810c7b3c-2807-42b0-8313-0b2255a9c034",
+          "amount": 400,
+          "unit": "ml",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "f408b4f8-8531-4f1e-9366-7bf5960f559d",
+          "amount": 1,
+          "unit": "dåse",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "d6afe592-399e-4b0c-b16d-af77b2f8ad15",
+          "amount": 1,
+          "unit": "",
+          "note": "skåret i tern af 1 cm"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8f2e9a19-b822-426f-8f6d-2cd6084bbc56",
+          "amount": 1,
+          "unit": "",
+          "note": "skåret i tynde strimler"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "d709c420-68d4-4ecb-85ff-a89d2acbe6b9",
+          "amount": 2,
+          "unit": "spsk",
+          "note": "til stegning"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "405c33a1-531c-436a-902d-fba25d7cde08",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        },
+        {
+          "kind": "section",
+          "title": "Til servering"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "7d6b20ae-9f7b-4ab0-a6b5-d06abf46d6ae",
+          "amount": 3,
+          "unit": "dl",
+          "note": "kog efter anvisning på emballage"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8416cf5f-78b6-4c03-abf3-1a83057c8714",
+          "amount": 1,
+          "unit": "",
+          "note": "grofthakket"
+        }
+      ],
+      "steps": [
+        "Kom karry, spidskommen, kardemomme og koriander i en tør gryde og varm godt igennem, til det begynder at dufte herligt.",
+        "Skru lidt ned for varmen og kom løg, hvidløg, ingefær og olie i gryden og sauter, til løgene er bløde.",
+        "Skyl linserne i en sigte og kom dem i gryden sammen med grøntsagsboullion, hakkede tomater og kokos­ mælk. Lad det simre under låg i 30 minutter. Rør jævn­ ligt i gryden.",
+        "Tilsæt kikærter, squash og peberfrugt og varm det hele godt igennem i ca. 10 minutter. Smag til med salt og friskkværnet peber.",
+        "Server med ris og grofthakket persille."
+      ],
+      "sourceUrl": "https://www.valdemarsro.dk/kikaertegryde/",
+      "createdAt": 1778090233277,
+      "updatedAt": 1778090233277
+    },
     {
       "id": "94f9b69a-29ee-4162-addf-9ac2379dbcd1",
       "type": "manual",
@@ -628,6 +776,48 @@
       "name": "Wraps",
       "createdAt": 1778090195744,
       "updatedAt": 1778090195744
+    },
+    {
+      "id": "8104ca75-0cad-487d-83f8-f8e59c0b4b9d",
+      "name": "stødt kardemomme",
+      "createdAt": 1778090233279,
+      "updatedAt": 1778090233279
+    },
+    {
+      "id": "dfca5e9c-f802-421d-931c-615a7bb8b4dc",
+      "name": "stødt koriander",
+      "createdAt": 1778090233279,
+      "updatedAt": 1778090233279
+    },
+    {
+      "id": "810c7b3c-2807-42b0-8313-0b2255a9c034",
+      "name": "kokosmælk",
+      "createdAt": 1778090233280,
+      "updatedAt": 1778090233280
+    },
+    {
+      "id": "d6afe592-399e-4b0c-b16d-af77b2f8ad15",
+      "name": "squash",
+      "createdAt": 1778090233280,
+      "updatedAt": 1778090233280
+    },
+    {
+      "id": "8f2e9a19-b822-426f-8f6d-2cd6084bbc56",
+      "name": "rød peberfrugt",
+      "createdAt": 1778090233280,
+      "updatedAt": 1778090233280
+    },
+    {
+      "id": "7d6b20ae-9f7b-4ab0-a6b5-d06abf46d6ae",
+      "name": "basmati ris",
+      "createdAt": 1778090233280,
+      "updatedAt": 1778090233280
+    },
+    {
+      "id": "8416cf5f-78b6-4c03-abf3-1a83057c8714",
+      "name": "håndfuld bredbladet persille",
+      "createdAt": 1778090233281,
+      "updatedAt": 1778090233281
     }
   ]
 }
