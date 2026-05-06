@@ -120,6 +120,10 @@
     const v = safeParse(localStorage.getItem(RECIPES_KEY), []);
     return Array.isArray(v) ? v : [];
   }
+  // Live recipes — what we show in the UI (excludes deleted tombstones)
+  function loadActiveRecipes() {
+    return loadRecipes().filter((r) => r && !r.deletedAt);
+  }
   function saveRecipes(arr) {
     localStorage.setItem(RECIPES_KEY, JSON.stringify(arr));
     localStorage.setItem(SCHEMA_KEY, String(SCHEMA_VERSION));
@@ -134,7 +138,7 @@
     schedulePush();
   }
   function getRecipe(id) {
-    return loadRecipes().find((r) => r.id === id);
+    return loadActiveRecipes().find((r) => r.id === id);
   }
   function upsertRecipe(recipe) {
     const all = loadRecipes();
@@ -144,7 +148,13 @@
     saveRecipes(all);
   }
   function deleteRecipeById(id) {
-    saveRecipes(loadRecipes().filter((r) => r.id !== id));
+    const all = loadRecipes();
+    const idx = all.findIndex((r) => r && r.id === id && !r.deletedAt);
+    if (idx < 0) return;
+    const now = Date.now();
+    // Replace with a tombstone so the deletion propagates via sync.
+    all[idx] = { id, deletedAt: now, updatedAt: now };
+    saveRecipes(all);
   }
   function getIngredient(id) {
     return loadIngredients().find((i) => i.id === id);
@@ -518,15 +528,32 @@
           merged = local;
         }
 
-        // Update local store with merged result (no-op when nothing changed)
         const localChanged =
           JSON.stringify(local) !== JSON.stringify(merged);
         if (localChanged) {
-          // saveRecipes/saveIngredients are wired to schedulePush; suppress while we
-          // already have an in-flight sync.
+          // Bypass save helpers' push hooks while we're already in flight.
           localStorage.setItem(RECIPES_KEY, JSON.stringify(merged.recipes));
           localStorage.setItem(SCHEMA_KEY, String(SCHEMA_VERSION));
           localStorage.setItem(INGREDIENTS_KEY, JSON.stringify(merged.ingredients));
+        }
+
+        // Skip the push entirely if remote already matches the merged data —
+        // nothing to commit, and avoids spurious commits to the repo.
+        const remoteData = remote.exists ? remote.payload || {} : null;
+        const sameAsRemote =
+          remoteData &&
+          JSON.stringify(remoteData.recipes || []) === JSON.stringify(merged.recipes) &&
+          JSON.stringify(remoteData.ingredients || []) === JSON.stringify(merged.ingredients);
+
+        if (sameAsRemote) {
+          saveSyncSettings({
+            sha: baseSha,
+            lastSyncAt: Date.now(),
+            lastError: "",
+          });
+          notifySyncListeners();
+          if (localChanged) router();
+          return { ok: true, localChanged };
         }
 
         const payload = {
@@ -543,12 +570,10 @@
             lastError: "",
           });
           notifySyncListeners();
-          // If we changed local data, re-render the current view
           if (localChanged) router();
           return { ok: true, localChanged };
         }
         if (result.conflict) {
-          // Loop: pull again, merge again, push again
           continue;
         }
       }
@@ -582,6 +607,44 @@
       await syncOnce({ silent: true });
     } catch {
       /* swallow on startup; user can retry from settings */
+    }
+  }
+
+  // ---------- Sync background triggers ----------
+  let _pollTimer = null;
+  function startSyncPolling(intervalMs = 30000) {
+    stopSyncPolling();
+    _pollTimer = setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      if (!syncConfigured()) return;
+      syncOnce({ silent: true }).catch(() => {});
+    }, intervalMs);
+  }
+  function stopSyncPolling() {
+    if (_pollTimer) {
+      clearInterval(_pollTimer);
+      _pollTimer = null;
+    }
+  }
+  function wireSyncTriggers() {
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        if (syncConfigured()) {
+          syncOnce({ silent: true }).catch(() => {});
+        }
+        startSyncPolling();
+      } else {
+        // Pause polling when hidden — save battery & API calls.
+        stopSyncPolling();
+      }
+    });
+    window.addEventListener("focus", () => {
+      if (document.visibilityState === "visible" && syncConfigured()) {
+        syncOnce({ silent: true }).catch(() => {});
+      }
+    });
+    if (document.visibilityState === "visible") {
+      startSyncPolling();
     }
   }
 
@@ -900,7 +963,7 @@
 
   function renderList() {
     clear(app);
-    const recipes = loadRecipes();
+    const recipes = loadActiveRecipes();
     let selected = new Set(loadCart());
 
     // Filter cart to only existing recipes
@@ -1964,6 +2027,7 @@
   function wireMenu() {
     const btn = document.getElementById("menu-btn");
     const list = document.getElementById("menu-list");
+    const syncNowBtn = document.getElementById("sync-now-btn");
     const syncBtn = document.getElementById("sync-btn");
     const exportBtn = document.getElementById("export-btn");
     const importBtn = document.getElementById("import-btn");
@@ -1990,6 +2054,23 @@
       if (e.key === "Escape") close();
     });
 
+    syncNowBtn.addEventListener("click", async () => {
+      close();
+      if (!syncConfigured()) {
+        navigate("#/sync");
+        return;
+      }
+      const original = syncNowBtn.textContent;
+      syncNowBtn.textContent = T.syncStatusInFlight;
+      syncNowBtn.disabled = true;
+      try {
+        await syncOnce();
+      } catch {
+        /* error stored in settings, surfaces on /sync page */
+      }
+      syncNowBtn.textContent = original;
+      syncNowBtn.disabled = false;
+    });
     syncBtn.addEventListener("click", () => {
       close();
       navigate("#/sync");
@@ -2042,6 +2123,7 @@
     wireMenu();
     router();
     startupSync();
+    wireSyncTriggers();
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("sw.js").catch(() => {});
     }
