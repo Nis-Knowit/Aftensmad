@@ -50,10 +50,13 @@
     importError: "Kunne ikke importere filen",
     importSuccess: (n) => `Importerede ${n} opskrift${n === 1 ? "" : "er"}`,
     addIngredient: "Tilføj ingrediens",
+    addSection: "Tilføj sektion",
+    sectionTitle: "Sektion (fx 'Raita')",
     amount: "Mængde",
     unit: "Enhed",
     ingredientName: "Ingrediens",
     noteOptional: "Note (valgfri)",
+    stepsHintSection: "Et trin pr. linje. Start en linje med '## ' for at lave en sektion (fx '## Raita').",
     remove: "Fjern",
     random: "🎲 Tilfældig",
     select: "Vælg",
@@ -355,10 +358,7 @@
         textOf(directItemprop(recipeScope, "name")) ||
         textOf(doc.querySelector("h1"));
       const description = textOf(directItemprop(recipeScope, "description"));
-      const ingredients = directItemprops(recipeScope, "recipeIngredient")
-        .concat(directItemprops(recipeScope, "ingredients"))
-        .map((n) => textOf(n))
-        .filter(Boolean);
+      const ingredients = extractIngredientsWithSections(recipeScope);
       const steps = extractSteps(recipeScope);
       const image = imageFrom(directItemprop(recipeScope, "image"));
       if (title && (ingredients.length > 0 || steps.length > 0)) {
@@ -420,10 +420,13 @@
     const title = (r.name || "").toString().trim();
     const description = (r.description || "").toString().trim();
 
-    let ings = [];
-    if (Array.isArray(r.recipeIngredient)) ings = r.recipeIngredient;
-    else if (Array.isArray(r.ingredients)) ings = r.ingredients;
-    ings = ings.map((s) => String(s).trim()).filter(Boolean);
+    let rawIngs = [];
+    if (Array.isArray(r.recipeIngredient)) rawIngs = r.recipeIngredient;
+    else if (Array.isArray(r.ingredients)) rawIngs = r.ingredients;
+    const ings = rawIngs
+      .map((s) => String(s).trim())
+      .filter(Boolean)
+      .map((text) => ({ kind: "ingredient", text }));
 
     let steps = [];
     const ri = r.recipeInstructions;
@@ -477,23 +480,120 @@
     const instrNodes = directItemprops(scope, "recipeInstructions");
     const out = [];
     for (const n of instrNodes) {
-      // If it has a `content` attr or is just text without children, push as one step
       const ps = n.querySelectorAll("p, li");
       if (ps.length > 0) {
-        for (const p of ps) {
-          const t = textOf(p);
-          if (t) out.push(t);
-        }
+        for (const p of ps) extractStepFromNode(p, out);
       } else {
         const t = textOf(n);
         if (t) {
-          // Split on double-newlines if it looks like one big chunk
           const parts = t.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
-          out.push(...(parts.length ? parts : [t]));
+          for (const part of parts.length ? parts : [t]) out.push(part);
         }
       }
     }
     return out;
+  }
+
+  // Detect "<strong>Section</strong><br>rest" pattern at the start of a step paragraph
+  // and split into a section marker ("## title") plus the rest as a step.
+  function extractStepFromNode(p, out) {
+    const first = p.firstElementChild;
+    if (
+      first &&
+      (first.tagName === "STRONG" || first.tagName === "B") &&
+      first.nextSibling &&
+      ((first.nextSibling.nodeType === 1 && first.nextSibling.tagName === "BR") ||
+        (first.nextSibling.nodeType === 3 && /^\s*$/.test(first.nextSibling.textContent) &&
+          first.nextSibling.nextSibling &&
+          first.nextSibling.nextSibling.nodeType === 1 &&
+          first.nextSibling.nextSibling.tagName === "BR"))
+    ) {
+      const sectionTitle = textOf(first);
+      // Clone p, remove the strong + br, take the rest as the step
+      const clone = p.cloneNode(true);
+      clone.removeChild(clone.firstElementChild); // strong
+      // Remove leading <br> and whitespace text nodes
+      while (
+        clone.firstChild &&
+        ((clone.firstChild.nodeType === 1 && clone.firstChild.tagName === "BR") ||
+          (clone.firstChild.nodeType === 3 && /^\s*$/.test(clone.firstChild.textContent)))
+      ) {
+        clone.removeChild(clone.firstChild);
+      }
+      if (sectionTitle) out.push("## " + sectionTitle);
+      const rest = textOf(clone);
+      if (rest) out.push(rest);
+      return;
+    }
+    const t = textOf(p);
+    if (t) out.push(t);
+  }
+
+  // Walk the recipe scope in document order and emit a mixed list of
+  // { kind: "ingredient", text } and { kind: "section", title } items.
+  function extractIngredientsWithSections(scope) {
+    const ingredientNodes = directItemprops(scope, "recipeIngredient")
+      .concat(directItemprops(scope, "ingredients"));
+    if (ingredientNodes.length === 0) return [];
+
+    const ingSet = new Set(ingredientNodes);
+    const container = lowestCommonAncestor(ingredientNodes) || scope;
+
+    const result = [];
+    const walker = container.ownerDocument.createTreeWalker(
+      container,
+      NodeFilter.SHOW_ELEMENT
+    );
+    let node = walker.nextNode();
+    while (node) {
+      if (ingSet.has(node)) {
+        const t = textOf(node);
+        if (t) result.push({ kind: "ingredient", text: t });
+        // Skip into ingredient subtree
+      } else if (isSectionLike(node, ingSet, container)) {
+        const t = textOf(node);
+        if (t) result.push({ kind: "section", title: t });
+      }
+      node = walker.nextNode();
+    }
+
+    // Trim leading section that has no following ingredients
+    while (result.length && result[result.length - 1].kind === "section") result.pop();
+    return result;
+  }
+
+  function isSectionLike(node, ingSet, container) {
+    // Skip nodes that are descendants of an ingredient
+    let p = node.parentElement;
+    while (p && p !== container) {
+      if (ingSet.has(p)) return false;
+      p = p.parentElement;
+    }
+    if (/^H[2-5]$/.test(node.tagName)) return true;
+    if (
+      node.tagName === "LI" &&
+      !node.hasAttribute("itemprop") &&
+      !node.querySelector("[itemprop='recipeIngredient']")
+    ) {
+      // Plain <li> without itemprop, in or near an ingredient list — treat as section
+      // Only count it if a sibling has the recipeIngredient itemprop
+      const parent = node.parentElement;
+      if (parent && parent.querySelector(":scope > [itemprop='recipeIngredient']")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function lowestCommonAncestor(nodes) {
+    if (nodes.length === 0) return null;
+    if (nodes.length === 1) return nodes[0].parentElement;
+    let candidate = nodes[0].parentElement;
+    while (candidate) {
+      if (nodes.every((n) => candidate.contains(n))) return candidate;
+      candidate = candidate.parentElement;
+    }
+    return null;
   }
 
   function imageFrom(node) {
@@ -676,6 +776,30 @@
     searchInput.addEventListener("input", (e) => renderItems(e.target.value));
   }
 
+  function makeSectionRow(title) {
+    const titleInput = el("input", {
+      type: "text",
+      class: "ing-section__title",
+      placeholder: T.sectionTitle,
+      value: title || "",
+      "aria-label": T.sectionTitle,
+    });
+    const removeBtn = el("button", {
+      type: "button",
+      class: "btn btn--icon ing-row__remove",
+      "aria-label": T.remove,
+      title: T.remove,
+      text: "×",
+      onclick: () => row.remove(),
+    });
+    const row = el("div", { class: "ing-section", "data-kind": "section" }, [
+      titleInput,
+      removeBtn,
+    ]);
+    row._inputs = { titleInput };
+    return row;
+  }
+
   function makeIngredientRow(line) {
     const data = line || { ingredientId: null, amount: null, unit: "", note: "" };
     const initialName =
@@ -723,7 +847,7 @@
         row.remove();
       },
     });
-    const row = el("div", { class: "ing-row" }, [
+    const row = el("div", { class: "ing-row", "data-kind": "ingredient" }, [
       amountInput,
       unitInput,
       nameInput,
@@ -805,14 +929,19 @@
           stepsInput.value = data.steps.join("\n");
         }
         if (Array.isArray(data.ingredients) && data.ingredients.length) {
-          // Replace existing ingredient rows with parsed ones
+          // Replace existing ingredient rows with imported ones (mixed: ingredient + section)
           clear(ingContainer);
-          for (const lineStr of data.ingredients) {
-            const parsed = parseLegacyIngredient(lineStr);
+          for (const item of data.ingredients) {
+            if (item && item.kind === "section") {
+              ingContainer.appendChild(makeSectionRow(item.title || ""));
+              continue;
+            }
+            const text = (item && item.text) || (typeof item === "string" ? item : "");
+            const parsed = parseLegacyIngredient(text);
             if (!parsed) continue;
             ingContainer.appendChild(
               makeIngredientRow({
-                ingredientId: null, // resolved on save
+                ingredientId: null,
                 amount: parsed.amount,
                 unit: parsed.unit,
                 note: parsed.note,
@@ -846,7 +975,11 @@
     const ingContainer = el("div", { class: "ing-list", id: "ing-list" });
     if (existing && Array.isArray(existing.ingredients)) {
       for (const line of existing.ingredients) {
-        ingContainer.appendChild(makeIngredientRow(line));
+        if (line && line.kind === "section") {
+          ingContainer.appendChild(makeSectionRow(line.title || ""));
+        } else {
+          ingContainer.appendChild(makeIngredientRow(line));
+        }
       }
     }
     if (ingContainer.children.length === 0) {
@@ -862,6 +995,17 @@
         row._inputs.amountInput.focus();
       },
     });
+    const addSectionBtn = el("button", {
+      type: "button",
+      class: "btn",
+      text: T.addSection,
+      onclick: () => {
+        const row = makeSectionRow("");
+        ingContainer.appendChild(row);
+        row._inputs.titleInput.focus();
+      },
+    });
+    const addRowActions = el("div", { class: "ing-list__actions" }, [addIngBtn, addSectionBtn]);
 
     const stepsInput = el("textarea", { id: "f-steps", rows: "8" });
     stepsInput.value =
@@ -887,11 +1031,11 @@
     const ingredientsField = el("div", { class: "form__field" }, [
       el("label", { text: T.ingredients }),
       ingContainer,
-      addIngBtn,
+      addRowActions,
     ]);
     const stepsField = el("div", { class: "form__field" }, [
       el("label", { for: "f-steps", text: T.steps }),
-      el("span", { class: "hint", text: T.stepsHint }),
+      el("span", { class: "hint", text: T.stepsHintSection }),
       stepsInput,
     ]);
     const urlField = el("div", { class: "form__field" }, [
@@ -959,19 +1103,26 @@
         };
       } else {
         const ingRows = [];
-        for (const row of ingContainer.querySelectorAll(".ing-row")) {
-          const inputs = row._inputs;
-          const name = inputs.nameInput.value.trim();
-          const amount = parseAmount(inputs.amountInput.value);
-          const unit = inputs.unitInput.value.trim();
-          const note = inputs.noteInput.value.trim();
-          if (!name && amount == null && !unit && !note) continue;
-          let ingredientId = null;
-          if (name) {
-            const ing = findOrCreateIngredient(name);
-            ingredientId = ing ? ing.id : null;
+        for (const row of ingContainer.children) {
+          const kind = row.getAttribute("data-kind");
+          if (kind === "section") {
+            const title = row._inputs.titleInput.value.trim();
+            if (!title) continue;
+            ingRows.push({ kind: "section", title });
+          } else {
+            const inputs = row._inputs;
+            const name = inputs.nameInput.value.trim();
+            const amount = parseAmount(inputs.amountInput.value);
+            const unit = inputs.unitInput.value.trim();
+            const note = inputs.noteInput.value.trim();
+            if (!name && amount == null && !unit && !note) continue;
+            let ingredientId = null;
+            if (name) {
+              const ing = findOrCreateIngredient(name);
+              ingredientId = ing ? ing.id : null;
+            }
+            ingRows.push({ kind: "ingredient", ingredientId, amount, unit, note });
           }
-          ingRows.push({ ingredientId, amount, unit, note });
         }
 
         const sourceUrl = importUrlInput.value.trim();
@@ -1039,21 +1190,40 @@
       if (recipe.ingredients && recipe.ingredients.length) {
         const sec = el("section", { class: "detail__section" });
         sec.appendChild(el("h2", { text: T.ingredients }));
-        const ul = el("ul");
+        let ul = null;
         for (const line of recipe.ingredients) {
+          if (line && line.kind === "section") {
+            sec.appendChild(el("h3", { class: "detail__subsection", text: line.title || "" }));
+            ul = null;
+            continue;
+          }
+          if (!ul) {
+            ul = el("ul");
+            sec.appendChild(ul);
+          }
           const ingName = line.ingredientId ? (getIngredient(line.ingredientId)?.name || "") : "";
           const formatted = formatIngredientLine(line, ingName);
           if (formatted) ul.appendChild(el("li", { text: formatted }));
         }
-        sec.appendChild(ul);
         wrap.appendChild(sec);
       }
       if (recipe.steps && recipe.steps.length) {
         const sec = el("section", { class: "detail__section" });
         sec.appendChild(el("h2", { text: T.steps }));
-        const ol = el("ol");
-        for (const item of recipe.steps) ol.appendChild(el("li", { text: item }));
-        sec.appendChild(ol);
+        let ol = null;
+        for (const item of recipe.steps) {
+          const sectMatch = typeof item === "string" ? item.match(/^##\s+(.*)$/) : null;
+          if (sectMatch) {
+            sec.appendChild(el("h3", { class: "detail__subsection", text: sectMatch[1] }));
+            ol = null;
+            continue;
+          }
+          if (!ol) {
+            ol = el("ol");
+            sec.appendChild(ol);
+          }
+          ol.appendChild(el("li", { text: item }));
+        }
         wrap.appendChild(sec);
       }
     }
