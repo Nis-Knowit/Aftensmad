@@ -1,7 +1,119 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-06T17:58:51.275Z",
+  "exportedAt": "2026-05-06T17:59:33.656Z",
   "recipes": [
+    {
+      "id": "b2f4d77b-80ba-4692-be0c-5e0c6aa65041",
+      "type": "manual",
+      "title": "Spinattærte med laks",
+      "description": "",
+      "ingredients": [
+        {
+          "kind": "section",
+          "title": "Tærtedej"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "7338b1e5-594c-4590-9a16-a6e2d6bd845b",
+          "amount": 2,
+          "unit": "spsk",
+          "note": "knust"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "9faab439-8a65-4d29-91e8-e00a46eda3b9",
+          "amount": 75,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "78fbce63-c337-4491-8dd9-3d1106b6227c",
+          "amount": 100,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8d41d6c5-ef0e-4b4d-9045-fb0faef00659",
+          "amount": 100,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "f8acff91-2952-4410-8ef5-172d4ec4a62c",
+          "amount": 3,
+          "unit": "spsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "405c33a1-531c-436a-902d-fba25d7cde08",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        },
+        {
+          "kind": "section",
+          "title": "Tærtefyld"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "91928a0c-b0d0-491f-8230-9a34a36fe4e7",
+          "amount": 2,
+          "unit": "",
+          "note": "skåret i grove tern"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "90b36e72-204a-478c-ac58-5598475e8411",
+          "amount": 4,
+          "unit": "",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "fd5729ce-b118-406b-888e-c24c5016761f",
+          "amount": 2,
+          "unit": "dl",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "55f867d6-e522-4342-bc67-35c9eba2bb15",
+          "amount": 1,
+          "unit": "",
+          "note": "friskrevet"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "35b96c92-0112-469d-9025-61cd2017b023",
+          "amount": 150,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "405c33a1-531c-436a-902d-fba25d7cde08",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        }
+      ],
+      "steps": [
+        "## Tærtedej",
+        "Bland alle de tørre ingredienser og smuldr smør i den tørre blanding. Hvis nødvendigt, så tilføj lidt vand for at samle dejen. Smør en tærteform og pres dejen ud i formen, så den er jævnt fordelt.",
+        "Bag tærtedejen i en forvarmet ovn ved 175 grader varmluft i 10 minutter.",
+        "## Fyld",
+        "Tø spinaten op i en gryde ved lav varme, giv et hurtigt opkog og smag til med muskatnød, salt og peber. Bland æg og mælk og fordel det på tærtebunden. Fordel derefter spinat og laks.",
+        "Sæt tærten i ovnen og bag den ved 175 grader varmluft i 30 minutter, eller til æggemassen er stivnet.",
+        "Server gerne en god grøn salat til"
+      ],
+      "sourceUrl": "https://www.valdemarsro.dk/spinattaerte-med-laks/",
+      "createdAt": 1778090371726,
+      "updatedAt": 1778090371726
+    },
     {
       "id": "2664ee50-d7d6-4646-9ebe-bcd61d8af642",
       "type": "manual",
@@ -955,6 +1067,66 @@
       "name": "frisk spinat",
       "createdAt": 1778090329340,
       "updatedAt": 1778090329340
+    },
+    {
+      "id": "7338b1e5-594c-4590-9a16-a6e2d6bd845b",
+      "name": "hørfrø",
+      "createdAt": 1778090371727,
+      "updatedAt": 1778090371727
+    },
+    {
+      "id": "9faab439-8a65-4d29-91e8-e00a46eda3b9",
+      "name": "fuldkornshvedemel",
+      "createdAt": 1778090371727,
+      "updatedAt": 1778090371727
+    },
+    {
+      "id": "78fbce63-c337-4491-8dd9-3d1106b6227c",
+      "name": "hvedemel",
+      "createdAt": 1778090371727,
+      "updatedAt": 1778090371727
+    },
+    {
+      "id": "8d41d6c5-ef0e-4b4d-9045-fb0faef00659",
+      "name": "smør",
+      "createdAt": 1778090371727,
+      "updatedAt": 1778090371727
+    },
+    {
+      "id": "f8acff91-2952-4410-8ef5-172d4ec4a62c",
+      "name": "vand",
+      "createdAt": 1778090371728,
+      "updatedAt": 1778090371728
+    },
+    {
+      "id": "91928a0c-b0d0-491f-8230-9a34a36fe4e7",
+      "name": "laksefilet",
+      "createdAt": 1778090371728,
+      "updatedAt": 1778090371728
+    },
+    {
+      "id": "90b36e72-204a-478c-ac58-5598475e8411",
+      "name": "æg",
+      "createdAt": 1778090371728,
+      "updatedAt": 1778090371728
+    },
+    {
+      "id": "fd5729ce-b118-406b-888e-c24c5016761f",
+      "name": "mælk",
+      "createdAt": 1778090371728,
+      "updatedAt": 1778090371728
+    },
+    {
+      "id": "55f867d6-e522-4342-bc67-35c9eba2bb15",
+      "name": "drys muskatnød",
+      "createdAt": 1778090371729,
+      "updatedAt": 1778090371729
+    },
+    {
+      "id": "35b96c92-0112-469d-9025-61cd2017b023",
+      "name": "frossen spinat",
+      "createdAt": 1778090371729,
+      "updatedAt": 1778090371729
     }
   ]
 }
