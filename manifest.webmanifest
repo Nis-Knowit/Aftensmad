@@ -1,0 +1,20 @@
+{
+  "name": "Aftensmad",
+  "short_name": "Aftensmad",
+  "description": "Personlig opskriftssamling — virker offline",
+  "lang": "da",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#b8451f",
+  "background_color": "#fbf7f2",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -71,6 +71,30 @@
     copied: "Kopieret!",
     copyFailed: "Kunne ikke kopiere",
     backToList: "Tilbage til listen",
+    sync: "Synkronisering",
+    syncToken: "GitHub Personal Access Token",
+    syncTokenHint: "Opret en fine-grained token på github.com/settings/personal-access-tokens med 'Contents: Read and write' på dette repo. Tokenen gemmes kun i denne browser.",
+    syncOpenTokenPage: "Åbn GitHub-tokens",
+    syncRepo: "Repo (owner/navn)",
+    syncPath: "Filsti i repoet",
+    syncSave: "Gem",
+    syncShow: "Vis",
+    syncHide: "Skjul",
+    syncAdvanced: "Avanceret",
+    syncForget: "Glem token",
+    syncForgetConfirm: "Er du sikker på at du vil slette tokenen fra denne browser?",
+    syncRunNow: "Synkronisér nu",
+    syncStatusUnconfigured: "Ikke konfigureret",
+    syncStatusReady: "Synkroniseret",
+    syncStatusInFlight: "Synkroniserer…",
+    syncStatusError: "Fejl",
+    syncStatusNever: "Aldrig synkroniseret",
+    syncStatusLastAt: (s) => "Senest synkroniseret " + s,
+    syncErrorAuth: "Token blev afvist (401). Tjek at den ikke er udløbet og har Contents-write til repoet.",
+    syncErrorNotFound: "Repo eller fil blev ikke fundet (404). Tjek owner/repo-stien.",
+    syncErrorNetwork: "Kunne ikke nå GitHub. Tjek dit internet og prøv igen.",
+    syncErrorOther: (s) => "GitHub-fejl: " + s,
+    syncErrorConflict: "Konflikt mod GitHub. Forsøgte at flette, men kunne ikke afgøres.",
     importFromUrl: "Hent fra link",
     importUrlPlaceholder: "https://… (indsæt opskrifts-URL)",
     fetch: "Hent",
@@ -99,6 +123,7 @@
   function saveRecipes(arr) {
     localStorage.setItem(RECIPES_KEY, JSON.stringify(arr));
     localStorage.setItem(SCHEMA_KEY, String(SCHEMA_VERSION));
+    schedulePush();
   }
   function loadIngredients() {
     const v = safeParse(localStorage.getItem(INGREDIENTS_KEY), []);
@@ -106,6 +131,7 @@
   }
   function saveIngredients(arr) {
     localStorage.setItem(INGREDIENTS_KEY, JSON.stringify(arr));
+    schedulePush();
   }
   function getRecipe(id) {
     return loadRecipes().find((r) => r.id === id);
@@ -327,6 +353,236 @@
       saveRecipes(recipes);
     }
     localStorage.setItem(SCHEMA_KEY, String(SCHEMA_VERSION));
+  }
+
+  // ---------- Sync (GitHub Contents API) ----------
+  const SYNC_KEY = "aftensmad.sync";
+  const DEFAULT_SYNC_OWNER = "Nis-Knowit";
+  const DEFAULT_SYNC_REPO = "Aftensmad";
+  const DEFAULT_SYNC_PATH = "data/recipes.json";
+
+  function loadSyncSettings() {
+    const v = safeParse(localStorage.getItem(SYNC_KEY), {}) || {};
+    return {
+      token: v.token || "",
+      owner: v.owner || DEFAULT_SYNC_OWNER,
+      repo: v.repo || DEFAULT_SYNC_REPO,
+      path: v.path || DEFAULT_SYNC_PATH,
+      sha: v.sha || "",
+      lastSyncAt: v.lastSyncAt || 0,
+      lastError: v.lastError || "",
+    };
+  }
+  function saveSyncSettings(partial) {
+    const next = { ...loadSyncSettings(), ...partial };
+    localStorage.setItem(SYNC_KEY, JSON.stringify(next));
+  }
+  function syncConfigured() {
+    return !!loadSyncSettings().token;
+  }
+
+  // UTF-8 safe base64 helpers
+  function b64encode(text) {
+    const utf8 = new TextEncoder().encode(text);
+    let binary = "";
+    for (const byte of utf8) binary += String.fromCharCode(byte);
+    return btoa(binary);
+  }
+  function b64decode(b64) {
+    const binary = atob((b64 || "").replace(/\s+/g, ""));
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  function ghContentsUrl() {
+    const s = loadSyncSettings();
+    return `https://api.github.com/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/contents/${s.path
+      .split("/").map(encodeURIComponent).join("/")}`;
+  }
+
+  function ghHeaders() {
+    const s = loadSyncSettings();
+    return {
+      Authorization: "Bearer " + s.token,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+    };
+  }
+
+  function ghMessageFromError(res, body) {
+    if (res.status === 401 || res.status === 403) return T.syncErrorAuth;
+    if (res.status === 404) return T.syncErrorNotFound;
+    let msg = "";
+    if (body && typeof body === "object" && body.message) msg = body.message;
+    return T.syncErrorOther(res.status + (msg ? " " + msg : ""));
+  }
+
+  async function pullRemote() {
+    const res = await fetch(ghContentsUrl(), {
+      method: "GET",
+      headers: ghHeaders(),
+      cache: "no-store",
+    });
+    if (res.status === 404) return { exists: false };
+    let body;
+    try { body = await res.json(); } catch { body = null; }
+    if (!res.ok) {
+      const err = new Error(ghMessageFromError(res, body));
+      err.status = res.status;
+      throw err;
+    }
+    let payload = null;
+    try {
+      const text = b64decode(body.content || "");
+      payload = JSON.parse(text);
+    } catch (e) {
+      throw new Error("Kunne ikke læse remote-filen — er den gyldig JSON?");
+    }
+    return { exists: true, sha: body.sha, payload };
+  }
+
+  async function pushRemote(payload, sha, message) {
+    const body = {
+      message: message || "Opdater opskrifter fra Aftensmad",
+      content: b64encode(JSON.stringify(payload, null, 2)),
+    };
+    if (sha) body.sha = sha;
+    const res = await fetch(ghContentsUrl(), {
+      method: "PUT",
+      headers: { ...ghHeaders(), "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (res.status === 409 || res.status === 422) return { conflict: true };
+    let resBody;
+    try { resBody = await res.json(); } catch { resBody = null; }
+    if (!res.ok) {
+      const err = new Error(ghMessageFromError(res, resBody));
+      err.status = res.status;
+      throw err;
+    }
+    return { ok: true, sha: resBody?.content?.sha };
+  }
+
+  function mergeData(local, remote) {
+    const recipesById = new Map();
+    for (const r of local.recipes || []) recipesById.set(r.id, r);
+    for (const r of remote.recipes || []) {
+      const existing = recipesById.get(r.id);
+      if (!existing || (r.updatedAt || 0) > (existing.updatedAt || 0)) {
+        recipesById.set(r.id, r);
+      }
+    }
+    const ingredientsById = new Map();
+    for (const i of local.ingredients || []) ingredientsById.set(i.id, i);
+    for (const i of remote.ingredients || []) {
+      const existing = ingredientsById.get(i.id);
+      if (!existing || (i.updatedAt || 0) > (existing.updatedAt || 0)) {
+        ingredientsById.set(i.id, i);
+      }
+    }
+    return {
+      recipes: [...recipesById.values()].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)),
+      ingredients: [...ingredientsById.values()],
+    };
+  }
+
+  let _syncInFlight = false;
+  let _syncListeners = new Set();
+  function notifySyncListeners() {
+    for (const fn of _syncListeners) {
+      try { fn(); } catch { /* ignore */ }
+    }
+  }
+  function onSyncChange(fn) {
+    _syncListeners.add(fn);
+    return () => _syncListeners.delete(fn);
+  }
+
+  async function syncOnce({ silent = false } = {}) {
+    if (!syncConfigured()) return { skipped: true };
+    if (_syncInFlight) return { busy: true };
+    _syncInFlight = true;
+    if (!silent) notifySyncListeners();
+    try {
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const remote = await pullRemote();
+        const local = { recipes: loadRecipes(), ingredients: loadIngredients() };
+
+        let merged;
+        let baseSha = "";
+        if (remote.exists) {
+          baseSha = remote.sha;
+          merged = mergeData(local, remote.payload || {});
+        } else {
+          merged = local;
+        }
+
+        // Update local store with merged result (no-op when nothing changed)
+        const localChanged =
+          JSON.stringify(local) !== JSON.stringify(merged);
+        if (localChanged) {
+          // saveRecipes/saveIngredients are wired to schedulePush; suppress while we
+          // already have an in-flight sync.
+          localStorage.setItem(RECIPES_KEY, JSON.stringify(merged.recipes));
+          localStorage.setItem(SCHEMA_KEY, String(SCHEMA_VERSION));
+          localStorage.setItem(INGREDIENTS_KEY, JSON.stringify(merged.ingredients));
+        }
+
+        const payload = {
+          schemaVersion: SCHEMA_VERSION,
+          exportedAt: new Date().toISOString(),
+          recipes: merged.recipes,
+          ingredients: merged.ingredients,
+        };
+        const result = await pushRemote(payload, baseSha);
+        if (result.ok) {
+          saveSyncSettings({
+            sha: result.sha || "",
+            lastSyncAt: Date.now(),
+            lastError: "",
+          });
+          notifySyncListeners();
+          // If we changed local data, re-render the current view
+          if (localChanged) router();
+          return { ok: true, localChanged };
+        }
+        if (result.conflict) {
+          // Loop: pull again, merge again, push again
+          continue;
+        }
+      }
+      throw new Error(T.syncErrorConflict);
+    } catch (err) {
+      const msg = err && err.message ? err.message : String(err);
+      saveSyncSettings({ lastError: msg });
+      notifySyncListeners();
+      throw err;
+    } finally {
+      _syncInFlight = false;
+      notifySyncListeners();
+    }
+  }
+
+  let _pushTimer = null;
+  function schedulePush(delay = 1500) {
+    if (!syncConfigured()) return;
+    if (_syncInFlight) return; // syncOnce will pick up current state
+    clearTimeout(_pushTimer);
+    _pushTimer = setTimeout(() => {
+      syncOnce({ silent: true }).catch(() => {
+        /* error already stored on settings; UI shows it via listener */
+      });
+    }, delay);
+  }
+
+  async function startupSync() {
+    if (!syncConfigured()) return;
+    try {
+      await syncOnce({ silent: true });
+    } catch {
+      /* swallow on startup; user can retry from settings */
+    }
   }
 
   // ---------- URL import ----------
@@ -1247,6 +1503,174 @@
     app.appendChild(wrap);
   }
 
+  function renderSync() {
+    clear(app);
+    app.appendChild(el("a", { class: "back-link", href: "#/", text: T.back }));
+    app.appendChild(el("h2", { text: T.sync }));
+
+    const wrap = el("div", { class: "sync" });
+    const statusBox = el("div", { class: "sync__status" });
+    wrap.appendChild(statusBox);
+
+    function renderStatus() {
+      clear(statusBox);
+      const s = loadSyncSettings();
+      let icon, text, cls;
+      if (_syncInFlight) {
+        icon = "🔄"; text = T.syncStatusInFlight; cls = "sync__status--busy";
+      } else if (!s.token) {
+        icon = "⚪"; text = T.syncStatusUnconfigured; cls = "sync__status--idle";
+      } else if (s.lastError) {
+        icon = "🔴"; text = T.syncStatusError + ": " + s.lastError; cls = "sync__status--error";
+      } else if (s.lastSyncAt) {
+        const dt = new Date(s.lastSyncAt);
+        const stamp = dt.toLocaleString("da-DK", { dateStyle: "short", timeStyle: "short" });
+        icon = "🟢"; text = T.syncStatusLastAt(stamp); cls = "sync__status--ok";
+      } else {
+        icon = "⚪"; text = T.syncStatusNever; cls = "sync__status--idle";
+      }
+      statusBox.className = "sync__status " + cls;
+      statusBox.appendChild(el("span", { class: "sync__status-icon", text: icon, "aria-hidden": "true" }));
+      statusBox.appendChild(el("span", { class: "sync__status-text", text }));
+    }
+    const off = onSyncChange(renderStatus);
+    // Detach listener when view replaced (next router render clears app)
+    app.addEventListener("DOMNodeRemoved", off, { once: true });
+    renderStatus();
+
+    const settings = loadSyncSettings();
+
+    // Token field with show/hide
+    const tokenInput = el("input", {
+      type: "password",
+      class: "sync__token",
+      autocomplete: "off",
+      spellcheck: false,
+      placeholder: "github_pat_… eller ghp_…",
+      value: settings.token,
+    });
+    const showHideBtn = el("button", {
+      type: "button",
+      class: "btn",
+      text: T.syncShow,
+      onclick: () => {
+        const showing = tokenInput.type === "text";
+        tokenInput.type = showing ? "password" : "text";
+        showHideBtn.textContent = showing ? T.syncShow : T.syncHide;
+      },
+    });
+    const tokenHelp = el("p", { class: "hint" }, [
+      document.createTextNode(T.syncTokenHint + " "),
+      el("a", {
+        href: "https://github.com/settings/personal-access-tokens",
+        target: "_blank",
+        rel: "noopener noreferrer",
+        text: T.syncOpenTokenPage,
+      }),
+    ]);
+    const tokenField = el("div", { class: "form__field" }, [
+      el("label", { text: T.syncToken }),
+      el("div", { class: "sync__token-row" }, [tokenInput, showHideBtn]),
+      tokenHelp,
+    ]);
+
+    // Advanced: repo + path
+    const ownerRepoInput = el("input", {
+      type: "text",
+      class: "sync__advanced-input",
+      value: `${settings.owner}/${settings.repo}`,
+      placeholder: `${DEFAULT_SYNC_OWNER}/${DEFAULT_SYNC_REPO}`,
+      autocomplete: "off",
+      spellcheck: false,
+    });
+    const pathInput = el("input", {
+      type: "text",
+      class: "sync__advanced-input",
+      value: settings.path,
+      placeholder: DEFAULT_SYNC_PATH,
+      autocomplete: "off",
+      spellcheck: false,
+    });
+    const advancedDetails = el("details", { class: "sync__advanced" }, [
+      el("summary", { text: T.syncAdvanced }),
+      el("div", { class: "form__field" }, [
+        el("label", { text: T.syncRepo }),
+        ownerRepoInput,
+      ]),
+      el("div", { class: "form__field" }, [
+        el("label", { text: T.syncPath }),
+        pathInput,
+      ]),
+    ]);
+
+    // Action buttons
+    const actionRow = el("div", { class: "sync__actions" });
+    const saveBtn = el("button", {
+      type: "button",
+      class: "btn btn--primary",
+      text: T.syncSave,
+      onclick: async () => {
+        const token = tokenInput.value.trim();
+        const repoPath = ownerRepoInput.value.trim();
+        const path = pathInput.value.trim();
+        let owner = DEFAULT_SYNC_OWNER, repo = DEFAULT_SYNC_REPO;
+        if (repoPath.includes("/")) {
+          const [o, r] = repoPath.split("/", 2);
+          owner = o.trim();
+          repo = r.trim();
+        }
+        saveSyncSettings({
+          token,
+          owner: owner || DEFAULT_SYNC_OWNER,
+          repo: repo || DEFAULT_SYNC_REPO,
+          path: path || DEFAULT_SYNC_PATH,
+          sha: "", // reset, will be re-discovered on next pull
+          lastError: "",
+        });
+        renderStatus();
+        if (token) {
+          try {
+            await syncOnce();
+          } catch {
+            // error already in settings
+          }
+          renderStatus();
+        }
+      },
+    });
+    const runNowBtn = el("button", {
+      type: "button",
+      class: "btn",
+      text: T.syncRunNow,
+      onclick: async () => {
+        try {
+          await syncOnce();
+        } catch {
+          // error already in settings
+        }
+      },
+    });
+    const forgetBtn = el("button", {
+      type: "button",
+      class: "btn btn--danger",
+      text: T.syncForget,
+      onclick: () => {
+        if (!confirm(T.syncForgetConfirm)) return;
+        saveSyncSettings({ token: "", sha: "", lastSyncAt: 0, lastError: "" });
+        tokenInput.value = "";
+        renderStatus();
+      },
+    });
+    actionRow.appendChild(saveBtn);
+    actionRow.appendChild(runNowBtn);
+    if (settings.token) actionRow.appendChild(forgetBtn);
+
+    wrap.appendChild(tokenField);
+    wrap.appendChild(advancedDetails);
+    wrap.appendChild(actionRow);
+    app.appendChild(wrap);
+  }
+
   function renderShopping() {
     clear(app);
     app.appendChild(el("a", { class: "back-link", href: "#/", text: T.backToList }));
@@ -1279,8 +1703,11 @@
 
     for (const r of recipes) {
       for (const line of r.ingredients) {
+        // Sections are display-only — never appear in the shopping list
+        if (line && line.kind === "section") continue;
         if (!line.ingredientId) {
-          freeForm.push({ recipe: r.title, text: line.note });
+          const text = (line.note || "").trim();
+          if (text) freeForm.push({ recipe: r.title, text });
           continue;
         }
         const unit = (line.unit || "").trim().toLowerCase();
@@ -1537,6 +1964,7 @@
   function wireMenu() {
     const btn = document.getElementById("menu-btn");
     const list = document.getElementById("menu-list");
+    const syncBtn = document.getElementById("sync-btn");
     const exportBtn = document.getElementById("export-btn");
     const importBtn = document.getElementById("import-btn");
     const importFile = document.getElementById("import-file");
@@ -1562,6 +1990,10 @@
       if (e.key === "Escape") close();
     });
 
+    syncBtn.addEventListener("click", () => {
+      close();
+      navigate("#/sync");
+    });
     exportBtn.addEventListener("click", () => {
       close();
       exportToFile();
@@ -1590,6 +2022,8 @@
       renderForm(null);
     } else if (hash === "#/indkoeb") {
       renderShopping();
+    } else if (hash === "#/sync") {
+      renderSync();
     } else if (editMatch) {
       const r = getRecipe(decodeURIComponent(editMatch[1]));
       if (r) renderForm(r);
@@ -1607,5 +2041,9 @@
     migrate();
     wireMenu();
     router();
+    startupSync();
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    }
   });
 })();
