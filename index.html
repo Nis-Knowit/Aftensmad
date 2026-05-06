@@ -19,7 +19,10 @@
     <div class="topbar__actions">
       <a class="btn btn--primary" href="#/ny">Ny opskrift</a>
       <div class="menu" id="menu">
-        <button class="btn btn--icon" id="menu-btn" aria-haspopup="true" aria-expanded="false" aria-label="Menu">⋯</button>
+        <button class="btn btn--icon" id="menu-btn" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
+          <span id="topbar-sync-dot" class="topbar__sync-dot" hidden></span>
+          <span aria-hidden="true">⋯</span>
+        </button>
         <ul class="menu__list" id="menu-list" role="menu" hidden>
           <li role="menuitem"><button id="sync-now-btn">Synkronisér nu</button></li>
           <li role="menuitem"><button id="sync-btn">Synkronisering</button></li>

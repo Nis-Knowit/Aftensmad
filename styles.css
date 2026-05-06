@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/fraunces-variable.woff2") format("woff2-variations");
+}
+
 :root {
   --bg: #fbf7f2;
   --surface: #ffffff;
@@ -7,8 +15,10 @@
   --accent: #b8451f;
   --accent-dark: #8d3416;
   --danger: #b22b2b;
+  --ok: #4a8a4a;
   --radius: 10px;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --serif: "Fraunces", "Iowan Old Style", "Charter", "Cambria", Georgia, "Times New Roman", serif;
 }
 
 * {
@@ -37,6 +47,28 @@ a:hover {
 h1, h2, h3 {
   margin: 0 0 0.5em;
   line-height: 1.25;
+}
+
+.topbar__title,
+.card__title,
+.detail__title,
+.empty p:first-child {
+  font-family: var(--serif);
+  font-feature-settings: "ss01", "ss02";
+}
+
+.topbar__title {
+  font-weight: 600;
+}
+
+.detail__title {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.card__title {
+  font-weight: 600;
+  letter-spacing: -0.005em;
 }
 
 /* Top bar */
@@ -70,6 +102,29 @@ h1, h2, h3 {
   align-items: center;
   gap: 0.5rem;
 }
+
+#menu-btn {
+  position: relative;
+}
+
+.topbar__sync-dot {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #b8b3ad;
+  border: 2px solid var(--surface);
+  box-sizing: content-box;
+}
+
+.topbar__sync-dot[hidden] { display: none; }
+
+.topbar__sync-dot--ok    { background: var(--ok); }
+.topbar__sync-dot--busy  { background: var(--accent); animation: sync-pulse 1.2s ease-in-out infinite; }
+.topbar__sync-dot--error { background: var(--danger); }
+.topbar__sync-dot--idle  { background: #b8b3ad; }
 
 /* Buttons */
 .btn {
@@ -248,9 +303,9 @@ h1, h2, h3 {
 .card > .card__check {
   flex-shrink: 0;
   align-self: center;
-  margin: 0 0.25rem 0 0.9rem;
-  width: 1.2rem;
-  height: 1.2rem;
+  margin: 0 1rem 0 0;
+  width: 1.25rem;
+  height: 1.25rem;
   accent-color: var(--accent);
   cursor: pointer;
 }
@@ -261,6 +316,22 @@ h1, h2, h3 {
   min-width: 0;
   padding: 1rem;
   color: var(--text);
+}
+
+.card__type {
+  display: inline-block;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: #fef6f0;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
 }
 
 .card__link:hover {
@@ -274,15 +345,12 @@ h1, h2, h3 {
 
 .card__title {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.5rem;
+  font-size: 1.15rem;
   font-weight: 600;
   margin: 0 0 0.25rem;
-}
-
-.card__icon {
-  font-size: 1rem;
 }
 
 .card__desc {
@@ -513,8 +581,33 @@ h1, h2, h3 {
   color: var(--muted);
 }
 
-.sync__status-icon {
-  font-size: 1.1rem;
+.sync__dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #b8b3ad;
+}
+
+.sync__status--ok .sync__dot {
+  background: var(--ok);
+  box-shadow: 0 0 0 3px rgba(74, 138, 74, 0.18);
+}
+
+.sync__status--busy .sync__dot {
+  background: var(--accent);
+  animation: sync-pulse 1.2s ease-in-out infinite;
+}
+
+.sync__status--error .sync__dot {
+  background: var(--danger);
+  box-shadow: 0 0 0 3px rgba(178, 43, 43, 0.18);
+}
+
+@keyframes sync-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(184, 69, 31, 0.5); }
+  50%      { box-shadow: 0 0 0 6px rgba(184, 69, 31, 0); }
 }
 
 .sync__status-text {
@@ -776,6 +869,14 @@ h1, h2, h3 {
   border-radius: var(--radius);
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+@keyframes row-enter {
+  0%   { opacity: 0; transform: translateY(-4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.row--enter {
+  animation: row-enter 220ms ease-out both;
 }
 
 .ing-row input {

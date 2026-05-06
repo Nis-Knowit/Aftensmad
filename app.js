@@ -59,7 +59,7 @@
     ingredientName: "Ingrediens",
     noteOptional: "Note (valgfri)",
     remove: "Fjern",
-    random: "🎲 Tilfældig",
+    random: "Tilfældig",
     select: "Vælg",
     selectDone: "Færdig",
     selectedCount: (n) => `${n} valgt`,
@@ -1055,7 +1055,6 @@
 
       const ul = el("ul", { class: "list" });
       for (const r of filtered) {
-        const icon = r.type === "link" ? "🔗" : "📖";
         const isChecked = selected.has(r.id);
         const checkboxId = `chk-${r.id}`;
 
@@ -1071,20 +1070,21 @@
           },
         });
 
+        const titleParts = [el("span", { text: r.title || "(uden titel)" })];
+        if (r.type === "link") {
+          titleParts.push(el("span", { class: "card__type", text: "Link" }));
+        }
         const link = el("a", {
           class: "card__link",
           href: `#/opskrift/${r.id}`,
         }, [
-          el("div", { class: "card__title" }, [
-            el("span", { class: "card__icon", text: icon, "aria-hidden": "true" }),
-            el("span", { text: r.title || "(uden titel)" }),
-          ]),
+          el("div", { class: "card__title" }, titleParts),
           r.description ? el("p", { class: "card__desc", text: r.description }) : null,
         ]);
 
         const cardEl = el("li", {
           class: "card" + (isChecked ? " card--selected" : ""),
-        }, [checkbox, link]);
+        }, [link, checkbox]);
 
         ul.appendChild(cardEl);
       }
@@ -1465,13 +1465,18 @@
     if (ingContainer.children.length === 0) {
       ingContainer.appendChild(makeIngredientRow(null));
     }
+    function appendRowAnimated(container, row) {
+      row.classList.add("row--enter");
+      row.addEventListener("animationend", () => row.classList.remove("row--enter"), { once: true });
+      container.appendChild(row);
+    }
     const addIngBtn = el("button", {
       type: "button",
       class: "btn",
       text: T.addIngredient,
       onclick: () => {
         const row = makeIngredientRow(null);
-        ingContainer.appendChild(row);
+        appendRowAnimated(ingContainer, row);
         row._inputs.amountInput.focus();
       },
     });
@@ -1481,7 +1486,7 @@
       text: T.addSection,
       onclick: () => {
         const row = makeSectionRow("");
-        ingContainer.appendChild(row);
+        appendRowAnimated(ingContainer, row);
         row._inputs.titleInput.focus();
       },
     });
@@ -1503,7 +1508,7 @@
       text: T.addStep,
       onclick: () => {
         const row = makeStepRow("");
-        stepsContainer.appendChild(row);
+        appendRowAnimated(stepsContainer, row);
         row._inputs.input.focus();
       },
     });
@@ -1513,7 +1518,7 @@
       text: T.addSection,
       onclick: () => {
         const row = makeStepSectionRow("");
-        stepsContainer.appendChild(row);
+        appendRowAnimated(stepsContainer, row);
         row._inputs.titleInput.focus();
       },
     });
@@ -1782,22 +1787,22 @@
     function renderStatus() {
       clear(statusBox);
       const s = loadSyncSettings();
-      let icon, text, cls;
+      let text, cls;
       if (_syncInFlight) {
-        icon = "🔄"; text = T.syncStatusInFlight; cls = "sync__status--busy";
+        text = T.syncStatusInFlight; cls = "sync__status--busy";
       } else if (!s.token) {
-        icon = "⚪"; text = T.syncStatusUnconfigured; cls = "sync__status--idle";
+        text = T.syncStatusUnconfigured; cls = "sync__status--idle";
       } else if (s.lastError) {
-        icon = "🔴"; text = T.syncStatusError + ": " + s.lastError; cls = "sync__status--error";
+        text = T.syncStatusError + ": " + s.lastError; cls = "sync__status--error";
       } else if (s.lastSyncAt) {
         const dt = new Date(s.lastSyncAt);
         const stamp = dt.toLocaleString("da-DK", { dateStyle: "short", timeStyle: "short" });
-        icon = "🟢"; text = T.syncStatusLastAt(stamp); cls = "sync__status--ok";
+        text = T.syncStatusLastAt(stamp); cls = "sync__status--ok";
       } else {
-        icon = "⚪"; text = T.syncStatusNever; cls = "sync__status--idle";
+        text = T.syncStatusNever; cls = "sync__status--idle";
       }
       statusBox.className = "sync__status " + cls;
-      statusBox.appendChild(el("span", { class: "sync__status-icon", text: icon, "aria-hidden": "true" }));
+      statusBox.appendChild(el("span", { class: "sync__dot", "aria-hidden": "true" }));
       statusBox.appendChild(el("span", { class: "sync__status-text", text }));
     }
     const off = onSyncChange(renderStatus);
@@ -2322,10 +2327,32 @@
   }
 
   window.addEventListener("hashchange", router);
+  function renderTopbarSyncDot() {
+    const dot = document.getElementById("topbar-sync-dot");
+    if (!dot) return;
+    const s = loadSyncSettings();
+    if (!s.token) {
+      dot.hidden = true;
+      return;
+    }
+    dot.hidden = false;
+    let cls;
+    if (_syncInFlight) cls = "topbar__sync-dot topbar__sync-dot--busy";
+    else if (s.lastError) cls = "topbar__sync-dot topbar__sync-dot--error";
+    else if (s.lastSyncAt) cls = "topbar__sync-dot topbar__sync-dot--ok";
+    else cls = "topbar__sync-dot topbar__sync-dot--idle";
+    dot.className = cls;
+    if (s.lastError) dot.title = "Sync-fejl: " + s.lastError;
+    else if (s.lastSyncAt) dot.title = "Synkroniseret " + new Date(s.lastSyncAt).toLocaleString("da-DK", { dateStyle: "short", timeStyle: "short" });
+    else dot.title = "Endnu ikke synkroniseret";
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     migrate();
     wireMenu();
     router();
+    renderTopbarSyncDot();
+    onSyncChange(renderTopbarSyncDot);
     startupSync();
     wireSyncTriggers();
     if ("serviceWorker" in navigator) {

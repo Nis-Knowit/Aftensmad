@@ -1,4 +1,4 @@
-const CACHE = "aftensmad-v1";
+const CACHE = "aftensmad-v2";
 const ASSETS = [
   "./",
   "./index.html",
@@ -6,6 +6,7 @@ const ASSETS = [
   "./app.js",
   "./manifest.webmanifest",
   "./icon.svg",
+  "./fonts/fraunces-variable.woff2",
 ];
 
 self.addEventListener("install", (event) => {
