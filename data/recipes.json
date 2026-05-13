@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-06T18:02:22.298Z",
+  "exportedAt": "2026-05-13T09:40:02.512Z",
   "recipes": [
     {
       "id": "87730cc8-3a6c-4f30-be3c-58cd4b54e390",
@@ -70,6 +70,20 @@
           "amount": null,
           "unit": "",
           "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "a95e7c14-c90f-4d1d-878d-ae587d76d2f0",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "320c6da2-e3d2-40f6-8cb6-010a15f5d33f",
+          "amount": null,
+          "unit": "",
+          "note": ""
         }
       ],
       "steps": [
@@ -80,7 +94,7 @@
       ],
       "sourceUrl": "https://www.valdemarsro.dk/nem-pastaret-med-laks-og-basilikum/",
       "createdAt": 1778090540107,
-      "updatedAt": 1778090540107
+      "updatedAt": 1778665200745
     },
     {
       "id": "63ddf881-2930-4a7c-b427-7a9e4304a760",
@@ -1242,6 +1256,12 @@
       "name": "håndfuld frisk basilikum",
       "createdAt": 1778090540108,
       "updatedAt": 1778090540108
+    },
+    {
+      "id": "320c6da2-e3d2-40f6-8cb6-010a15f5d33f",
+      "name": "Cherry tomater - bagt i ovnen",
+      "createdAt": 1778665200747,
+      "updatedAt": 1778665200747
     }
   ]
 }
