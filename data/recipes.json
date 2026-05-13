@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-13T09:40:02.512Z",
+  "exportedAt": "2026-05-13T09:41:05.436Z",
   "recipes": [
     {
       "id": "87730cc8-3a6c-4f30-be3c-58cd4b54e390",
@@ -89,12 +89,13 @@
       "steps": [
         "Kom laksefiletter på en bageplade med bagepapir. Drys med salt og peber og bag dem i en forvarmet ovn ved 175 grader varmluft i 10 minutter. Drys finthakkede mandler på og bag videre i cirka 5 minutter eller til laksen er lige knap færdigtilberedt.",
         "Kog imens pasta efter anvisning på pakken.",
-        "Sauter løg og hvidløg på en pande til det er blødt og klart. Tilsæt fløden og lad den bruse af og koge lidt ind. Fjern skindet fra den næsten færdigtilberedte laks og kom laksen på panden med flødesaucen, lad den simre med i et lille minutstid til den er færdig og smag godt til med salt, peber og finthakket basilikum.",
-        "Vend den varme pasta med flødesaucen og fordel resten af saucen og laksen over på tallerkener."
+        "Sauter løg og hvidløg på en pande til det er blødt og klart. Tilsæt fløden og lad den bruse af og koge lidt ind. Tilføj to håndfulde frisk spinat og lad det svinde ind. Fjern skindet fra den næsten færdigtilberedte laks og kom laksen på panden med flødesaucen, lad den simre med i et lille minutstid til den er færdig og smag godt til med salt, peber og finthakket basilikum.",
+        "Vend den varme pasta med flødesaucen og fordel resten af saucen og laksen over på tallerkener.",
+        "Skær cherrytomater over og kom dem i ovnen til de er bagte."
       ],
       "sourceUrl": "https://www.valdemarsro.dk/nem-pastaret-med-laks-og-basilikum/",
       "createdAt": 1778090540107,
-      "updatedAt": 1778665200745
+      "updatedAt": 1778665263623
     },
     {
       "id": "63ddf881-2930-4a7c-b427-7a9e4304a760",
