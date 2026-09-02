@@ -1,7 +1,106 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-09-02T15:19:21.770Z",
+  "exportedAt": "2026-09-02T15:27:04.643Z",
   "recipes": [
+    {
+      "id": "46f11623-f025-416b-98fd-1403a9b8623a",
+      "type": "manual",
+      "title": "Shakshuka med feta og brød",
+      "description": "En smagfuld og varmende ret fra Mellemøsten med tomater, paprika og æg.",
+      "ingredients": [
+        {
+          "kind": "ingredient",
+          "ingredientId": "d709c420-68d4-4ecb-85ff-a89d2acbe6b9",
+          "amount": 2,
+          "unit": "spsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8078cf8f-cc0b-4c88-9ca6-09806751ab91",
+          "amount": 1,
+          "unit": "stk",
+          "note": "finthakket"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "bd05c95c-478a-4d24-9bd4-8aa1c3b9bc53",
+          "amount": 2,
+          "unit": "fed",
+          "note": "finthakket"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8f2e9a19-b822-426f-8f6d-2cd6084bbc56",
+          "amount": 1,
+          "unit": "stk",
+          "note": "i strimler"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "7e1545d3-3624-4e3d-a77a-ff63b9b36acc",
+          "amount": 2,
+          "unit": "tsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "85a5c922-0eae-4e79-8c20-175c644bdf2e",
+          "amount": 1,
+          "unit": "tsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "7a90d284-f529-4f85-8e49-f9c3dddedb32",
+          "amount": 800,
+          "unit": "g",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "90b36e72-204a-478c-ac58-5598475e8411",
+          "amount": 4,
+          "unit": "stk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "ab5fc288-6d2c-4290-88a9-cc80ddecf582",
+          "amount": 100,
+          "unit": "g",
+          "note": "smuldret"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "adaab838-27a8-4fa5-bdbe-af4633abeff5",
+          "amount": 1,
+          "unit": "håndfuld",
+          "note": "grofthakket"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "405c33a1-531c-436a-902d-fba25d7cde08",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        }
+      ],
+      "steps": [
+        "Varm olivenolien op i en dyb pande eller sauterpande ved middelvarme.",
+        "Tilsæt hakket løg, hvidløg og rød peberfrugt, og svits indtil grøntsagerne er møre.",
+        "Drys spidskommen og karry over grøntsagerne, og rør godt rundt i et minuts tid.",
+        "Hæld de hakkede tomater på panden, og lad det simre i cirka 10 minutter, til saucen tykner lidt. Smag til med salt og peber.",
+        "Lav 4 små fordybninger i tomatsaucen med en ske, og slå et æg ud i hver fordybning.",
+        "Læg et låg på panden, og lad æggene pochere i saucen i 5-8 minutter, indtil hviderne er stivnede, men aeggblommerne stadig er bløde.",
+        "Drys med smuldret feta og grofthakket persille inden servering."
+      ],
+      "sourceUrl": "",
+      "aiGenerated": true,
+      "aiModel": "gemini-3.5-flash-lite",
+      "createdAt": 1788362822710,
+      "updatedAt": 1788362822710
+    },
     {
       "id": "90b6c128-4d53-40fc-b376-cbe73294abaa",
       "type": "manual",
@@ -1371,6 +1470,18 @@
       "name": "rapsolie",
       "createdAt": 1788362359667,
       "updatedAt": 1788362359667
+    },
+    {
+      "id": "ab5fc288-6d2c-4290-88a9-cc80ddecf582",
+      "name": "feta",
+      "createdAt": 1788362822712,
+      "updatedAt": 1788362822712
+    },
+    {
+      "id": "adaab838-27a8-4fa5-bdbe-af4633abeff5",
+      "name": "bredbladet persille",
+      "createdAt": 1788362822713,
+      "updatedAt": 1788362822713
     }
   ]
 }
