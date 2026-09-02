@@ -1,7 +1,91 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-05-13T09:41:05.436Z",
+  "exportedAt": "2026-09-02T15:19:21.770Z",
   "recipes": [
+    {
+      "id": "90b6c128-4d53-40fc-b376-cbe73294abaa",
+      "type": "manual",
+      "title": "Asiatisk spidskålswok med edamamebønner",
+      "description": "En lynhurtig, farverig og kaloriefattig wokret fuld af sprøde grøntsager, proteinrige edamamebønner og masser af asiatisk velsmag.",
+      "ingredients": [
+        {
+          "kind": "ingredient",
+          "ingredientId": "39433400-acfb-42bd-bd83-52f8a980c777",
+          "amount": 0.5,
+          "unit": "stk",
+          "note": "snittet fint"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "9172b0de-33fd-4f00-b237-f469e120a13a",
+          "amount": 2,
+          "unit": "stk",
+          "note": "i tynde stave"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8f2e9a19-b822-426f-8f6d-2cd6084bbc56",
+          "amount": 1,
+          "unit": "stk",
+          "note": "i tynde strimler"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "d559e787-fb6b-45d4-a334-65dab04f7002",
+          "amount": 150,
+          "unit": "g",
+          "note": "bælgfrie og optøede"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "bd05c95c-478a-4d24-9bd4-8aa1c3b9bc53",
+          "amount": 1,
+          "unit": "fed",
+          "note": "finthakket"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8a1dc16d-45cb-48c9-964d-f3a5c7e900fc",
+          "amount": 1,
+          "unit": "tsk",
+          "note": "frisk, fintrevet"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "48b7fbf7-e558-4216-b730-672b63fe71dd",
+          "amount": 2,
+          "unit": "spsk",
+          "note": "Coop soja"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "225c65ea-c246-466e-bb2a-1e47376041b7",
+          "amount": 1,
+          "unit": "tsk",
+          "note": "til stegning"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "24f59b25-efdd-4808-b96c-25b40a8adf90",
+          "amount": 1,
+          "unit": "spsk",
+          "note": "til drys"
+        }
+      ],
+      "steps": [
+        "Forbered alle grøntsagerne ved at snitte spidskål fint, skære gulerødder i tynde stave og rød peberfrugt i strimler.",
+        "Varm rapsolien op i en wok eller en dyb pande ved høj varme.",
+        "Tilsæt finthakket hvidløg og fintrevet ingefær, og lad det svitse i 30 sekunder under omrøring, uden at det tager farve.",
+        "Kom spidskål, gulerødder og rød peberfrugt i wokken, og steg det i 3-4 minutter under konstant omrøring, så grøntsagerne beholder deres sprødhed.",
+        "Tilsæt edamamebønner og soja, og lad det hele varme igennem i cirka 2 minutter.",
+        "Anret wokken i dybe tallerkener, drys med sesamfrø, og server retten straks."
+      ],
+      "sourceUrl": "",
+      "aiGenerated": true,
+      "aiModel": "gemini-3.5-flash",
+      "createdAt": 1788362359662,
+      "updatedAt": 1788362359662
+    },
     {
       "id": "87730cc8-3a6c-4f30-be3c-58cd4b54e390",
       "type": "manual",
@@ -1263,6 +1347,30 @@
       "name": "Cherry tomater - bagt i ovnen",
       "createdAt": 1778665200747,
       "updatedAt": 1778665200747
+    },
+    {
+      "id": "9172b0de-33fd-4f00-b237-f469e120a13a",
+      "name": "gulerødder",
+      "createdAt": 1788362359663,
+      "updatedAt": 1788362359663
+    },
+    {
+      "id": "d559e787-fb6b-45d4-a334-65dab04f7002",
+      "name": "edamamebønner",
+      "createdAt": 1788362359665,
+      "updatedAt": 1788362359665
+    },
+    {
+      "id": "48b7fbf7-e558-4216-b730-672b63fe71dd",
+      "name": "soja",
+      "createdAt": 1788362359666,
+      "updatedAt": 1788362359666
+    },
+    {
+      "id": "225c65ea-c246-466e-bb2a-1e47376041b7",
+      "name": "rapsolie",
+      "createdAt": 1788362359667,
+      "updatedAt": 1788362359667
     }
   ]
 }
