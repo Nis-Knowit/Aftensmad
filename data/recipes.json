@@ -1,7 +1,119 @@
 {
   "schemaVersion": 2,
-  "exportedAt": "2026-09-02T15:27:04.643Z",
+  "exportedAt": "2026-09-02T15:28:42.975Z",
   "recipes": [
+    {
+      "id": "801f1cbc-568c-49d8-9283-8c759704e6d5",
+      "type": "manual",
+      "title": "Kikærtekorma med blomkål og ris",
+      "description": "En mild og cremet vegetarisk indisk gryderet med kikærter, blomkål og cashewnødder.",
+      "ingredients": [
+        {
+          "kind": "ingredient",
+          "ingredientId": "d709c420-68d4-4ecb-85ff-a89d2acbe6b9",
+          "amount": 2,
+          "unit": "spsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8078cf8f-cc0b-4c88-9ca6-09806751ab91",
+          "amount": 1,
+          "unit": "stk",
+          "note": "finthakket"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "bd05c95c-478a-4d24-9bd4-8aa1c3b9bc53",
+          "amount": 3,
+          "unit": "fed",
+          "note": "finthakket"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8a1dc16d-45cb-48c9-964d-f3a5c7e900fc",
+          "amount": 1,
+          "unit": "spsk",
+          "note": "fintrevet"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "85a5c922-0eae-4e79-8c20-175c644bdf2e",
+          "amount": 2,
+          "unit": "tsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "7e1545d3-3624-4e3d-a77a-ff63b9b36acc",
+          "amount": 1,
+          "unit": "tsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "8104ca75-0cad-487d-83f8-f8e59c0b4b9d",
+          "amount": 1,
+          "unit": "tsk",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "d3c6c420-2489-475c-8a4e-63deb927c9dc",
+          "amount": 1,
+          "unit": "stk",
+          "note": "i mindre bukeder"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "f408b4f8-8531-4f1e-9366-7bf5960f559d",
+          "amount": 1,
+          "unit": "dåse",
+          "note": "drænede"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "810c7b3c-2807-42b0-8313-0b2255a9c034",
+          "amount": 400,
+          "unit": "ml",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "c2a75204-f03a-4d96-9391-801152fe8cd0",
+          "amount": 2,
+          "unit": "dl",
+          "note": ""
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "7d6b20ae-9f7b-4ab0-a6b5-d06abf46d6ae",
+          "amount": 3,
+          "unit": "dl",
+          "note": "kogt efter anvisning"
+        },
+        {
+          "kind": "ingredient",
+          "ingredientId": "405c33a1-531c-436a-902d-fba25d7cde08",
+          "amount": null,
+          "unit": "",
+          "note": ""
+        }
+      ],
+      "steps": [
+        "Varm olivenolien op i en stor gryde ved middelvarme.",
+        "Tilsæt finthakket løg, hvidløg og fintrevet ingefær, og svits indtil løgene er bløde.",
+        "Tilsæt karry, spidskommen og kardemomme, og rør godt rundt i et minut, til krydderierne dufter.",
+        "Kom blomkålsbukeder, drænede kikærter, kokosmælk og grøntsagsbouillon i gryden.",
+        "Bring retten i kog, skru ned for varmen, og lad det simre under låg i cirka 15 minutter, indtil blomkålen er mør.",
+        "Smag til med salt og friskkværnet peber, og servér kormaen varm sammen med kogte basmatiris."
+      ],
+      "sourceUrl": "",
+      "aiGenerated": true,
+      "aiModel": "gemini-3.5-flash-lite",
+      "createdAt": 1788362920954,
+      "updatedAt": 1788362920954
+    },
     {
       "id": "46f11623-f025-416b-98fd-1403a9b8623a",
       "type": "manual",
@@ -1482,6 +1594,12 @@
       "name": "bredbladet persille",
       "createdAt": 1788362822713,
       "updatedAt": 1788362822713
+    },
+    {
+      "id": "d3c6c420-2489-475c-8a4e-63deb927c9dc",
+      "name": "blomkål",
+      "createdAt": 1788362920955,
+      "updatedAt": 1788362920955
     }
   ]
 }
