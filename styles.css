@@ -1055,3 +1055,228 @@ h1, h2, h3 {
     font-size: 0.9rem;
   }
 }
+
+/* AI chef */
+.topbar__chef {
+  padding: 0.5rem 0.75rem;
+}
+
+.topbar__chef--setup {
+  border-style: dashed;
+}
+
+.card__type--ai {
+  color: var(--muted);
+  background: #f4f0eb;
+  border-color: var(--border);
+}
+
+.detail__ai-note {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.chat {
+  display: grid;
+  gap: 1rem;
+}
+
+.chat__log {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.chat__intro {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.chat__intro p {
+  margin: 0 0 0.75rem;
+}
+
+.chat__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chat__chip {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 80ms ease, border-color 80ms ease;
+}
+
+.chat__chip:hover {
+  background: #fef6f0;
+  border-color: var(--accent);
+}
+
+.chat__msg {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.chat__msg p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.chat__msg--user {
+  background: #fef6f0;
+  border-color: #f0d9cb;
+  margin-left: 2rem;
+}
+
+.chat__msg--chef {
+  margin-right: 2rem;
+}
+
+.chat__msg--busy p {
+  color: var(--muted);
+}
+
+.chat__msg--busy::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-top: 0.6rem;
+  border-radius: 2px;
+  background: var(--accent);
+  opacity: 0.35;
+  animation: chef-thinking 1.2s ease-in-out infinite;
+}
+
+@keyframes chef-thinking {
+  0%, 100% { transform: scaleX(0.15); transform-origin: left; }
+  50%      { transform: scaleX(1); transform-origin: left; }
+}
+
+.chat__msg--error {
+  border-color: var(--danger);
+  background: #fbf0f0;
+}
+
+.chat__msg--error p {
+  color: var(--danger);
+}
+
+.chat__composer {
+  display: grid;
+  gap: 0.5rem;
+  position: sticky;
+  bottom: 0;
+  padding: 0.75rem 0 0;
+  background: linear-gradient(to bottom, rgba(251, 247, 242, 0), var(--bg) 35%);
+}
+
+.chat__input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  resize: none;
+  overflow: hidden;
+  min-height: 3rem;
+}
+
+.chat__composer-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Recipe proposals inside a chef message */
+.proposal {
+  margin-top: 0.9rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.proposal__title {
+  font-family: var(--serif);
+  font-feature-settings: "ss01", "ss02";
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0 0 0.35rem;
+}
+
+.proposal__desc {
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.proposal__section h4 {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+}
+
+.proposal__group {
+  margin: 0.6rem 0 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.proposal ul,
+.proposal ol {
+  margin: 0 0 0.5rem;
+  padding-left: 1.3rem;
+}
+
+.proposal li {
+  margin-bottom: 0.2rem;
+}
+
+.proposal__steps summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.35rem 0;
+}
+
+.proposal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.proposal__status {
+  margin: 0.6rem 0 0;
+  font-size: 0.9rem;
+  color: var(--ok);
+}
+
+.proposal__note {
+  margin: 0.6rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+@media (max-width: 420px) {
+  .chat__msg--user { margin-left: 0.75rem; }
+  .chat__msg--chef { margin-right: 0.75rem; }
+  .topbar__chef { padding: 0.45rem 0.6rem; }
+}

@@ -105,6 +105,60 @@
     fetchSuccess: "Opskriften er hentet",
     fetchFileProtocol: "Henting virker ikke når siden åbnes direkte fra disken. Kør i stedet 'python -m http.server' i mappen og åbn http://localhost:8000 — eller deploy til GitHub Pages.",
     source: "Kilde",
+
+    // AI chef
+    chef: "Kok",
+    chefTitle: "Spørg kokken",
+    chefIntro:
+      "Beskriv hvad I har lyst til, eller hvad der står i køleskabet. Kokken kender jeres opskrifter og foreslår noget der passer til.",
+    chefPlaceholder: "Fx: aftensmad i aften med kikærter og ris…",
+    chefSend: "Spørg",
+    chefThinking: "Kokken tænker…",
+    chefClear: "Ryd samtalen",
+    chefClearConfirm: "Er du sikker på at du vil rydde samtalen?",
+    chefNoKey: "Du mangler en Gemini API-nøgle før kokken kan svare.",
+    chefSetupKey: "Indsæt API-nøgle",
+    chefAddRecipe: "Gem i opskrifter",
+    chefEvolve: "Videreudvikl",
+    chefEvolvePrefix: (t) => `Videreudvikl "${t}": `,
+    chefSaved: "Gemt i opskrifter",
+    chefOpenSaved: "Åbn opskriften",
+    chefEmptyReply: "Kokken svarede ikke. Prøv igen.",
+    chefAiNote: "Foreslået af AI — tjek mængder og tilberedning inden du følger den.",
+    chefAiBadge: "AI",
+    chefSuggestions: [
+      "Hvad kan vi lave i aften?",
+      "Noget hurtigt på under 30 minutter",
+      "En vegetarisk ret vi ikke har prøvet",
+      "Brug rester: ris og kikærter",
+    ],
+    chefIngredients: "Ingredienser",
+    chefSteps: "Fremgangsmåde",
+
+    // AI settings
+    ai: "AI-indstillinger",
+    aiKey: "Gemini API-nøgle",
+    aiKeyHint:
+      "Opret en nøgle på aistudio.google.com/apikey. Nøglen gemmes kun i denne browser og bliver hverken eksporteret eller synkroniseret til GitHub.",
+    aiOpenKeyPage: "Åbn Google AI Studio",
+    aiModel: "Model",
+    aiSave: "Gem",
+    aiForget: "Glem nøgle",
+    aiForgetConfirm: "Er du sikker på at du vil slette nøglen fra denne browser?",
+    aiTest: "Test nøglen",
+    aiTesting: "Tester…",
+    aiTestOk: "Nøglen virker.",
+    aiTestFailed: (s) => "Nøglen virker ikke: " + s,
+    aiStatusUnconfigured: "Ingen nøgle gemt",
+    aiStatusReady: "Nøgle gemt i denne browser",
+    aiErrorAuth: "Nøglen blev afvist. Tjek at den er gyldig og har adgang til Gemini API.",
+    aiErrorRate: "For mange forespørgsler lige nu. Prøv igen om lidt.",
+    aiErrorBusy: "Modellen er overbelastet lige nu. Prøv igen om lidt.",
+    aiErrorNetwork: "Kunne ikke nå Google. Tjek dit internet og prøv igen.",
+    aiErrorBlocked: "Svaret blev blokeret af Googles filter. Prøv at formulere det anderledes.",
+    aiErrorTruncated: "Svaret blev afbrudt undervejs. Prøv at bede om færre opskrifter.",
+    aiErrorTimeout: "Kokken svarede ikke inden for 2 minutter. Prøv igen.",
+    aiErrorOther: (s) => "Gemini-fejl: " + s,
   };
 
   // ---------- Storage ----------
@@ -937,6 +991,367 @@
     return data;
   }
 
+  // ---------- AI chef (Google Gemini) ----------
+  const AI_KEY = "aftensmad.ai";
+  const CHAT_KEY = "aftensmad.chat";
+  const AI_DEFAULT_MODEL = "gemini-3.5-flash";
+  const AI_MODEL_CHOICES = [
+    { id: "gemini-3.5-flash", label: "Gemini 3.5 Flash (anbefalet)" },
+    { id: "gemini-3.5-flash-lite", label: "Gemini 3.5 Flash Lite (hurtigere)" },
+    { id: "gemini-3.1-pro-preview", label: "Gemini 3.1 Pro (grundigere)" },
+    { id: "gemini-flash-latest", label: "Gemini Flash Latest" },
+  ];
+  const AI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/";
+  const AI_TIMEOUT_MS = 120000;
+  // Rough cap on how much of the collection we hand the model as taste context.
+  const AI_CONTEXT_BUDGET = 24000;
+
+  function loadAiSettings() {
+    const v = safeParse(localStorage.getItem(AI_KEY), {}) || {};
+    return {
+      key: v.key || "",
+      model: v.model || AI_DEFAULT_MODEL,
+    };
+  }
+  function saveAiSettings(partial) {
+    const next = { ...loadAiSettings(), ...partial };
+    localStorage.setItem(AI_KEY, JSON.stringify(next));
+  }
+  function aiConfigured() {
+    return !!loadAiSettings().key;
+  }
+
+  // Fallback chain: the chosen model first, then the rest. The newest models
+  // occasionally answer 503 under load, and a sibling usually goes through.
+  function aiModelChain() {
+    const chosen = loadAiSettings().model || AI_DEFAULT_MODEL;
+    const rest = AI_MODEL_CHOICES.map((m) => m.id).filter((id) => id !== chosen);
+    return [chosen, ...rest];
+  }
+
+  // ---------- Context: what the family already eats ----------
+  function recipeToContextText(r) {
+    const lines = [];
+    lines.push("### " + (r.title || "(uden titel)"));
+    if (r.description) lines.push(r.description);
+    if (r.type === "link") {
+      lines.push("(Gemt som link til " + (r.url || "en ekstern side") + ")");
+      return lines.join("\n");
+    }
+    if (Array.isArray(r.ingredients) && r.ingredients.length) {
+      lines.push("Ingredienser:");
+      for (const line of r.ingredients) {
+        if (line && line.kind === "section") {
+          lines.push("- [" + (line.title || "") + "]");
+          continue;
+        }
+        const name = line.ingredientId ? getIngredient(line.ingredientId)?.name || "" : "";
+        const formatted = formatIngredientLine(line, name);
+        if (formatted) lines.push("- " + formatted);
+      }
+    }
+    if (Array.isArray(r.steps) && r.steps.length) {
+      lines.push("Fremgangsmåde:");
+      for (const step of r.steps) {
+        if (typeof step !== "string") continue;
+        const sect = step.match(/^##\s+(.*)$/);
+        lines.push(sect ? "- [" + sect[1] + "]" : "- " + step);
+      }
+    }
+    return lines.join("\n");
+  }
+
+  function buildRecipeContext() {
+    const recipes = loadActiveRecipes();
+    if (recipes.length === 0) {
+      return "Familien har endnu ikke gemt nogen opskrifter, så du kender ikke deres smag. Spørg gerne ind til den.";
+    }
+    const blocks = [];
+    let used = 0;
+    let skipped = 0;
+    for (const r of recipes) {
+      const text = recipeToContextText(r);
+      if (used + text.length > AI_CONTEXT_BUDGET) {
+        skipped++;
+        continue;
+      }
+      blocks.push(text);
+      used += text.length;
+    }
+    let out =
+      "Familien har " + recipes.length + " gemte opskrifter. Her er de:\n\n" + blocks.join("\n\n");
+    if (skipped > 0) {
+      out += "\n\n(" + skipped + " yderligere opskrifter er udeladt for at spare plads.)";
+    }
+    const names = [...new Set(loadIngredients().map((i) => i.name).filter(Boolean))];
+    if (names.length) {
+      out += "\n\nIngredienser familien har brugt før: " + names.join(", ") + ".";
+    }
+    return out;
+  }
+
+  function aiSystemPrompt() {
+    return [
+      'Du er husets kok i opskriftsappen "Aftensmad". Du hjælper en dansk familie med at finde på aftensmad.',
+      "",
+      "Regler for dine svar:",
+      "- Svar altid på dansk.",
+      "- Brug metriske enheder og danske mål. Foretrukne enheder: " + COMMON_UNITS.join(", ") + ".",
+      '- Skriv mængder som tal, fx "2" eller "0,5". Aldrig "en halv" eller "et par".',
+      '- Feltet "reply" er din korte besked til familien (2-5 sætninger): hvad du foreslår, og hvorfor det passer til dem. Skriv ikke selve opskriften i "reply".',
+      '- Læg opskrifter i "recipes". Foreslå normalt 1-3. Beder de om ét enkelt forslag, giv ét.',
+      '- Beder de dig ændre eller videreudvikle en opskrift du netop har foreslået, returner hele den opdaterede opskrift igen i "recipes".',
+      '- Stiller de bare et spørgsmål (fx om en teknik eller en erstatning), svar i "reply" og lad "recipes" være tom.',
+      "- Fremgangsmåden skal være konkrete trin i rækkefølge, et trin pr. element. Sæt ikke numre foran trinnene.",
+      '- Brug gruppetitler i "ingredientGroups" og "stepGroups" når retten har flere dele (fx "Gryden", "Raita"). Har den kun én del, lad "title" være tom.',
+      "- Læn dig op ad familiens smag som den fremgår af opskrifterne nedenfor, men gentag ikke en opskrift de allerede har, medmindre de spørger om netop den.",
+      "",
+      "Familiens opskrifter:",
+      "",
+      buildRecipeContext(),
+    ].join("\n");
+  }
+
+  // ---------- Response schema ----------
+  const AI_INGREDIENT_SCHEMA = {
+    type: "OBJECT",
+    properties: {
+      amount: {
+        type: "STRING",
+        description: "Mængde som tal, fx '2' eller '0,5'. Tom streng hvis ikke relevant.",
+      },
+      unit: { type: "STRING", description: "Enhed, fx g, dl, spsk. Tom streng hvis ikke relevant." },
+      name: { type: "STRING", description: "Ingrediensens navn alene, uden mængde og enhed." },
+      note: { type: "STRING", description: "Kort note, fx 'finthakket'. Tom streng hvis ingen." },
+    },
+    required: ["amount", "unit", "name", "note"],
+    propertyOrdering: ["amount", "unit", "name", "note"],
+  };
+
+  const AI_GROUP_SCHEMA = (itemSchema) => ({
+    type: "ARRAY",
+    items: {
+      type: "OBJECT",
+      properties: {
+        title: { type: "STRING", description: "Gruppens navn, eller tom streng hvis retten kun har en del." },
+        items: { type: "ARRAY", items: itemSchema },
+      },
+      required: ["title", "items"],
+      propertyOrdering: ["title", "items"],
+    },
+  });
+
+  const AI_RESPONSE_SCHEMA = {
+    type: "OBJECT",
+    properties: {
+      reply: { type: "STRING" },
+      recipes: {
+        type: "ARRAY",
+        items: {
+          type: "OBJECT",
+          properties: {
+            title: { type: "STRING" },
+            description: { type: "STRING" },
+            ingredientGroups: AI_GROUP_SCHEMA(AI_INGREDIENT_SCHEMA),
+            stepGroups: AI_GROUP_SCHEMA({ type: "STRING" }),
+          },
+          required: ["title", "description", "ingredientGroups", "stepGroups"],
+          propertyOrdering: ["title", "description", "ingredientGroups", "stepGroups"],
+        },
+      },
+    },
+    required: ["reply", "recipes"],
+    propertyOrdering: ["reply", "recipes"],
+  };
+
+  // ---------- Chat transcript ----------
+  // sessionStorage: this is scratch conversation, not data worth syncing.
+  function loadChat() {
+    const v = safeParse(sessionStorage.getItem(CHAT_KEY), []);
+    return Array.isArray(v) ? v : [];
+  }
+  function saveChat(msgs) {
+    try {
+      sessionStorage.setItem(CHAT_KEY, JSON.stringify(msgs));
+    } catch {
+      /* transcript outgrew sessionStorage — carry on in memory */
+    }
+  }
+  function clearChatTranscript() {
+    sessionStorage.removeItem(CHAT_KEY);
+  }
+
+  function aiErrorMessage(status, body) {
+    if (status === 400 || status === 401 || status === 403) return T.aiErrorAuth;
+    if (status === 429) return T.aiErrorRate;
+    if (status === 500 || status === 503) return T.aiErrorBusy;
+    let msg = "";
+    if (body && body.error && body.error.message) msg = body.error.message;
+    return T.aiErrorOther(status + (msg ? " " + msg : ""));
+  }
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  // Turn our transcript into Gemini `contents`. Model turns are replayed as the
+  // raw JSON they produced, so the model still sees its own earlier proposals.
+  function chatToContents(msgs) {
+    return msgs
+      .filter((m) => m && (m.role === "user" || m.role === "model") && !m.error)
+      .map((m) => ({
+        role: m.role,
+        parts: [{ text: m.role === "model" ? m.raw || m.text || "" : m.text || "" }],
+      }))
+      .filter((c) => c.parts[0].text);
+  }
+
+  async function callGemini(msgs) {
+    const settings = loadAiSettings();
+    if (!settings.key) throw new Error(T.chefNoKey);
+
+    const body = {
+      systemInstruction: { parts: [{ text: aiSystemPrompt() }] },
+      contents: chatToContents(msgs),
+      generationConfig: {
+        temperature: 1,
+        responseMimeType: "application/json",
+        responseSchema: AI_RESPONSE_SCHEMA,
+      },
+    };
+
+    let lastError = null;
+    for (const model of aiModelChain()) {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        let res;
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+        try {
+          res = await fetch(AI_ENDPOINT + encodeURIComponent(model) + ":generateContent", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-goog-api-key": settings.key,
+            },
+            body: JSON.stringify(body),
+            signal: controller.signal,
+          });
+        } catch (err) {
+          if (err && err.name === "AbortError") {
+            lastError = new Error(T.aiErrorTimeout);
+            break; // give a sibling model a turn
+          }
+          // Network-level failure: another model will not help.
+          throw new Error(T.aiErrorNetwork);
+        } finally {
+          clearTimeout(timer);
+        }
+
+        let payload = null;
+        try {
+          payload = await res.json();
+        } catch {
+          payload = null;
+        }
+
+        if (!res.ok) {
+          lastError = new Error(aiErrorMessage(res.status, payload));
+          lastError.status = res.status;
+          // Overload and rate limits are worth one retry, then a sibling model.
+          if (res.status === 500 || res.status === 503) {
+            if (attempt === 0) {
+              await sleep(1200);
+              continue;
+            }
+            break;
+          }
+          if (res.status === 429) {
+            if (attempt === 0) {
+              await sleep(2500);
+              continue;
+            }
+            break;
+          }
+          // 400/401/403 mean the key or the request is wrong — retrying is futile.
+          throw lastError;
+        }
+
+        const candidate = (payload && payload.candidates && payload.candidates[0]) || null;
+        if (!candidate) {
+          const blocked = payload && payload.promptFeedback && payload.promptFeedback.blockReason;
+          throw new Error(blocked ? T.aiErrorBlocked : T.chefEmptyReply);
+        }
+        if (candidate.finishReason === "SAFETY" || candidate.finishReason === "PROHIBITED_CONTENT") {
+          throw new Error(T.aiErrorBlocked);
+        }
+        const text = ((candidate.content && candidate.content.parts) || [])
+          .map((p) => p.text || "")
+          .join("");
+        const truncated = candidate.finishReason === "MAX_TOKENS";
+        let parsed = null;
+        if (text.trim()) {
+          try {
+            parsed = JSON.parse(text);
+          } catch {
+            parsed = null;
+          }
+        }
+        if (!parsed) throw new Error(truncated ? T.aiErrorTruncated : T.chefEmptyReply);
+        return { raw: text, data: parsed, model };
+      }
+    }
+    throw lastError || new Error(T.chefEmptyReply);
+  }
+
+  // ---------- Proposal to stored recipe ----------
+  function proposalToRecipe(proposal, model) {
+    const now = Date.now();
+    const ingRows = [];
+    for (const group of proposal.ingredientGroups || []) {
+      const groupTitle = (group.title || "").trim();
+      const items = Array.isArray(group.items) ? group.items : [];
+      if (groupTitle && items.length) ingRows.push({ kind: "section", title: groupTitle });
+      for (const item of items) {
+        if (!item) continue;
+        const name = (item.name || "").trim();
+        const amount = parseAmount(item.amount);
+        const unit = (item.unit || "").trim();
+        const note = (item.note || "").trim();
+        if (!name && amount == null && !unit && !note) continue;
+        let ingredientId = null;
+        if (name) {
+          const ing = findOrCreateIngredient(name);
+          ingredientId = ing ? ing.id : null;
+        }
+        ingRows.push({ kind: "ingredient", ingredientId, amount, unit, note });
+      }
+    }
+
+    const stepRows = [];
+    for (const group of proposal.stepGroups || []) {
+      const groupTitle = (group.title || "").trim();
+      const items = (Array.isArray(group.items) ? group.items : [])
+        .map((s) => (typeof s === "string" ? s.trim() : ""))
+        .filter(Boolean);
+      if (groupTitle && items.length) stepRows.push("## " + groupTitle);
+      for (const step of items) stepRows.push(step);
+    }
+
+    return {
+      id: uuid(),
+      type: "manual",
+      title: (proposal.title || "").trim() || "Forslag fra kokken",
+      description: (proposal.description || "").trim(),
+      ingredients: ingRows,
+      steps: stepRows,
+      sourceUrl: "",
+      aiGenerated: true,
+      aiModel: model || loadAiSettings().model,
+      createdAt: now,
+      updatedAt: now,
+    };
+  }
+
   // ---------- Datalists ----------
   function ensureDatalists() {
     let ingDl = document.getElementById("ingredients-datalist");
@@ -1073,6 +1488,11 @@
         const titleParts = [el("span", { text: r.title || "(uden titel)" })];
         if (r.type === "link") {
           titleParts.push(el("span", { class: "card__type", text: "Link" }));
+        }
+        if (r.aiGenerated) {
+          titleParts.push(
+            el("span", { class: "card__type card__type--ai", text: T.chefAiBadge, title: T.chefAiNote })
+          );
         }
         const link = el("a", {
           class: "card__link",
@@ -1662,6 +2082,9 @@
           ingredients: ingRows,
           steps: stepRows,
           sourceUrl: isValidHttpUrl(sourceUrl) ? sourceUrl : "",
+          // An edited AI suggestion is still AI-derived — keep it labelled.
+          aiGenerated: existing ? !!existing.aiGenerated : false,
+          aiModel: existing ? existing.aiModel || "" : "",
           createdAt: existing ? existing.createdAt : now,
           updatedAt: now,
         };
@@ -1692,6 +2115,9 @@
       el("h2", { class: "detail__title", text: recipe.title }),
       recipe.description
         ? el("p", { class: "detail__desc", text: recipe.description })
+        : null,
+      recipe.aiGenerated
+        ? el("p", { class: "detail__ai-note", text: T.chefAiNote })
         : null,
     ]);
     wrap.appendChild(header);
@@ -2112,6 +2538,367 @@
     app.appendChild(wrap);
   }
 
+  // ---------- AI chef view ----------
+  function renderProposalCard(proposal, model, onEvolve) {
+    const card = el("div", { class: "proposal" });
+
+    card.appendChild(el("h3", { class: "proposal__title", text: proposal.title || "" }));
+    if (proposal.description) {
+      card.appendChild(el("p", { class: "proposal__desc", text: proposal.description }));
+    }
+
+    const groups = Array.isArray(proposal.ingredientGroups) ? proposal.ingredientGroups : [];
+    if (groups.length) {
+      const sec = el("div", { class: "proposal__section" });
+      sec.appendChild(el("h4", { text: T.chefIngredients }));
+      for (const group of groups) {
+        const title = (group.title || "").trim();
+        if (title) sec.appendChild(el("h5", { class: "proposal__group", text: title }));
+        const ul = el("ul");
+        for (const item of Array.isArray(group.items) ? group.items : []) {
+          if (!item) continue;
+          const text = formatIngredientLine(
+            { amount: parseAmount(item.amount), unit: (item.unit || "").trim(), note: (item.note || "").trim() },
+            (item.name || "").trim()
+          );
+          if (text) ul.appendChild(el("li", { text }));
+        }
+        if (ul.children.length) sec.appendChild(ul);
+      }
+      card.appendChild(sec);
+    }
+
+    const stepGroups = Array.isArray(proposal.stepGroups) ? proposal.stepGroups : [];
+    if (stepGroups.length) {
+      const details = el("details", { class: "proposal__steps" });
+      details.appendChild(el("summary", { text: T.chefSteps }));
+      for (const group of stepGroups) {
+        const title = (group.title || "").trim();
+        if (title) details.appendChild(el("h5", { class: "proposal__group", text: title }));
+        const ol = el("ol");
+        for (const step of Array.isArray(group.items) ? group.items : []) {
+          if (typeof step !== "string" || !step.trim()) continue;
+          ol.appendChild(el("li", { text: step.trim() }));
+        }
+        if (ol.children.length) details.appendChild(ol);
+      }
+      card.appendChild(details);
+    }
+
+    const status = el("p", { class: "proposal__status", hidden: true });
+    const saveBtn = el("button", {
+      type: "button",
+      class: "btn btn--primary",
+      text: T.chefAddRecipe,
+      onclick: () => {
+        const recipe = proposalToRecipe(proposal, model);
+        upsertRecipe(recipe);
+        saveBtn.disabled = true;
+        saveBtn.textContent = T.chefSaved;
+        clear(status);
+        status.hidden = false;
+        status.appendChild(document.createTextNode(T.chefSaved + " — "));
+        status.appendChild(
+          el("a", { href: `#/opskrift/${recipe.id}`, text: T.chefOpenSaved })
+        );
+      },
+    });
+    const evolveBtn = el("button", {
+      type: "button",
+      class: "btn",
+      text: T.chefEvolve,
+      onclick: () => onEvolve(proposal.title || ""),
+    });
+
+    card.appendChild(el("div", { class: "proposal__actions" }, [saveBtn, evolveBtn]));
+    card.appendChild(status);
+    card.appendChild(el("p", { class: "proposal__note", text: T.chefAiNote }));
+    return card;
+  }
+
+  function renderChat() {
+    clear(app);
+    app.appendChild(el("a", { class: "back-link", href: "#/", text: T.back }));
+    app.appendChild(el("h2", { text: T.chefTitle }));
+
+    if (!aiConfigured()) {
+      app.appendChild(
+        el("div", { class: "empty" }, [
+          el("p", { text: T.chefNoKey }),
+          el("a", { class: "btn btn--primary", href: "#/ai", text: T.chefSetupKey }),
+        ])
+      );
+      return;
+    }
+
+    let messages = loadChat();
+    let busy = false;
+
+    const wrap = el("div", { class: "chat" });
+    const log = el("div", { class: "chat__log" });
+    wrap.appendChild(log);
+
+    const textarea = el("textarea", {
+      class: "chat__input",
+      rows: "2",
+      placeholder: T.chefPlaceholder,
+      "aria-label": T.chefPlaceholder,
+    });
+    const sendBtn = el("button", { type: "button", class: "btn btn--primary", text: T.chefSend });
+    const clearBtn = el("button", {
+      type: "button",
+      class: "btn",
+      text: T.chefClear,
+      onclick: () => {
+        if (!messages.length) return;
+        if (!confirm(T.chefClearConfirm)) return;
+        messages = [];
+        clearChatTranscript();
+        renderLog();
+      },
+    });
+    const composer = el("div", { class: "chat__composer" }, [
+      textarea,
+      el("div", { class: "chat__composer-actions" }, [sendBtn, clearBtn]),
+    ]);
+
+    function evolve(title) {
+      textarea.value = T.chefEvolvePrefix(title);
+      textarea.focus();
+      const end = textarea.value.length;
+      textarea.setSelectionRange(end, end);
+      autoResizeTextarea(textarea);
+      textarea.scrollIntoView({ block: "nearest" });
+    }
+
+    function renderLog() {
+      clear(log);
+
+      if (messages.length === 0) {
+        const intro = el("div", { class: "chat__intro" }, [el("p", { text: T.chefIntro })]);
+        const chips = el("div", { class: "chat__chips" });
+        for (const suggestion of T.chefSuggestions) {
+          chips.appendChild(
+            el("button", {
+              type: "button",
+              class: "chat__chip",
+              text: suggestion,
+              onclick: () => send(suggestion),
+            })
+          );
+        }
+        intro.appendChild(chips);
+        log.appendChild(intro);
+      }
+
+      for (const msg of messages) {
+        if (msg.role === "user") {
+          log.appendChild(el("div", { class: "chat__msg chat__msg--user" }, [
+            el("p", { text: msg.text }),
+          ]));
+          continue;
+        }
+        const bubble = el("div", {
+          class: "chat__msg chat__msg--chef" + (msg.error ? " chat__msg--error" : ""),
+        });
+        if (msg.text) bubble.appendChild(el("p", { text: msg.text }));
+        for (const proposal of msg.recipes || []) {
+          bubble.appendChild(renderProposalCard(proposal, msg.model, evolve));
+        }
+        log.appendChild(bubble);
+      }
+
+      if (busy) {
+        log.appendChild(
+          el("div", { class: "chat__msg chat__msg--chef chat__msg--busy" }, [
+            el("p", { text: T.chefThinking }),
+          ])
+        );
+      }
+
+      clearBtn.hidden = messages.length === 0;
+      log.lastElementChild?.scrollIntoView({ block: "nearest" });
+    }
+
+    async function send(rawText) {
+      if (busy) return;
+      const text = (rawText != null ? rawText : textarea.value).trim();
+      if (!text) return;
+
+      textarea.value = "";
+      autoResizeTextarea(textarea);
+      messages.push({ role: "user", text });
+      busy = true;
+      sendBtn.disabled = true;
+      renderLog();
+
+      try {
+        const { raw, data, model } = await callGemini(messages);
+        const recipes = Array.isArray(data.recipes) ? data.recipes.filter((r) => r && r.title) : [];
+        const reply = typeof data.reply === "string" ? data.reply.trim() : "";
+        messages.push({
+          role: "model",
+          text: reply || (recipes.length ? "" : T.chefEmptyReply),
+          recipes,
+          raw,
+          model,
+        });
+      } catch (err) {
+        // Errors are kept out of the API transcript so a retry starts clean.
+        messages.push({
+          role: "model",
+          text: (err && err.message) || T.chefEmptyReply,
+          error: true,
+        });
+      } finally {
+        busy = false;
+        sendBtn.disabled = false;
+        saveChat(messages);
+        renderLog();
+      }
+    }
+
+    sendBtn.addEventListener("click", () => send());
+    textarea.addEventListener("input", () => autoResizeTextarea(textarea));
+    textarea.addEventListener("keydown", (e) => {
+      // Enter sends, Shift+Enter makes a new line.
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        send();
+      }
+    });
+
+    wrap.appendChild(composer);
+    app.appendChild(wrap);
+    renderLog();
+    requestAnimationFrame(() => autoResizeTextarea(textarea));
+    textarea.focus();
+  }
+
+  // ---------- AI settings view ----------
+  function renderAiSettings() {
+    clear(app);
+    app.appendChild(el("a", { class: "back-link", href: "#/", text: T.back }));
+    app.appendChild(el("h2", { text: T.ai }));
+
+    const settings = loadAiSettings();
+    const wrap = el("div", { class: "sync" });
+
+    const statusBox = el("div", { class: "sync__status" });
+    function renderStatus(message, cls) {
+      clear(statusBox);
+      const s = loadAiSettings();
+      const text = message || (s.key ? T.aiStatusReady : T.aiStatusUnconfigured);
+      const klass = cls || (s.key ? "sync__status--ok" : "sync__status--idle");
+      statusBox.className = "sync__status " + klass;
+      statusBox.appendChild(el("span", { class: "sync__dot", "aria-hidden": "true" }));
+      statusBox.appendChild(el("span", { class: "sync__status-text", text }));
+    }
+    renderStatus();
+    wrap.appendChild(statusBox);
+
+    const keyInput = el("input", {
+      type: "password",
+      class: "sync__token",
+      autocomplete: "off",
+      spellcheck: false,
+      placeholder: "AQ.… eller AIza…",
+      value: settings.key,
+    });
+    const showHideBtn = el("button", {
+      type: "button",
+      class: "btn",
+      text: T.syncShow,
+      onclick: () => {
+        const showing = keyInput.type === "text";
+        keyInput.type = showing ? "password" : "text";
+        showHideBtn.textContent = showing ? T.syncShow : T.syncHide;
+      },
+    });
+    const keyField = el("div", { class: "form__field" }, [
+      el("label", { text: T.aiKey }),
+      el("div", { class: "sync__token-row" }, [keyInput, showHideBtn]),
+      el("p", { class: "hint" }, [
+        document.createTextNode(T.aiKeyHint + " "),
+        el("a", {
+          href: "https://aistudio.google.com/apikey",
+          target: "_blank",
+          rel: "noopener noreferrer",
+          text: T.aiOpenKeyPage,
+        }),
+      ]),
+    ]);
+
+    const modelSelect = el("select", { class: "sync__advanced-input" });
+    for (const choice of AI_MODEL_CHOICES) {
+      modelSelect.appendChild(
+        el("option", { value: choice.id, text: choice.label, selected: choice.id === settings.model })
+      );
+    }
+    const modelField = el("div", { class: "form__field" }, [
+      el("label", { text: T.aiModel }),
+      modelSelect,
+    ]);
+
+    const saveBtn = el("button", {
+      type: "button",
+      class: "btn btn--primary",
+      text: T.aiSave,
+      onclick: () => {
+        saveAiSettings({ key: keyInput.value.trim(), model: modelSelect.value });
+        renderStatus();
+        renderTopbarChefLink();
+      },
+    });
+    const testBtn = el("button", {
+      type: "button",
+      class: "btn",
+      text: T.aiTest,
+      onclick: async () => {
+        saveAiSettings({ key: keyInput.value.trim(), model: modelSelect.value });
+        renderTopbarChefLink();
+        if (!aiConfigured()) {
+          renderStatus(T.aiStatusUnconfigured, "sync__status--idle");
+          return;
+        }
+        testBtn.disabled = true;
+        const original = testBtn.textContent;
+        testBtn.textContent = T.aiTesting;
+        renderStatus(T.aiTesting, "sync__status--busy");
+        try {
+          await callGemini([{ role: "user", text: "Sig kort hej." }]);
+          renderStatus(T.aiTestOk, "sync__status--ok");
+        } catch (err) {
+          renderStatus(T.aiTestFailed((err && err.message) || "ukendt fejl"), "sync__status--error");
+        } finally {
+          testBtn.disabled = false;
+          testBtn.textContent = original;
+        }
+      },
+    });
+    const forgetBtn = el("button", {
+      type: "button",
+      class: "btn btn--danger",
+      text: T.aiForget,
+      onclick: () => {
+        if (!confirm(T.aiForgetConfirm)) return;
+        saveAiSettings({ key: "" });
+        keyInput.value = "";
+        clearChatTranscript();
+        renderStatus();
+        renderTopbarChefLink();
+      },
+    });
+
+    const actions = el("div", { class: "sync__actions" }, [saveBtn, testBtn]);
+    if (settings.key) actions.appendChild(forgetBtn);
+
+    wrap.appendChild(keyField);
+    wrap.appendChild(modelField);
+    wrap.appendChild(actions);
+    app.appendChild(wrap);
+  }
+
   // ---------- Export / Import ----------
   function exportToFile() {
     const data = {
@@ -2238,6 +3025,7 @@
     const list = document.getElementById("menu-list");
     const syncNowBtn = document.getElementById("sync-now-btn");
     const syncBtn = document.getElementById("sync-btn");
+    const aiBtn = document.getElementById("ai-btn");
     const exportBtn = document.getElementById("export-btn");
     const importBtn = document.getElementById("import-btn");
     const importFile = document.getElementById("import-file");
@@ -2284,6 +3072,10 @@
       close();
       navigate("#/sync");
     });
+    aiBtn.addEventListener("click", () => {
+      close();
+      navigate("#/ai");
+    });
     exportBtn.addEventListener("click", () => {
       close();
       exportToFile();
@@ -2314,6 +3106,10 @@
       renderShopping();
     } else if (hash === "#/sync") {
       renderSync();
+    } else if (hash === "#/kok") {
+      renderChat();
+    } else if (hash === "#/ai") {
+      renderAiSettings();
     } else if (editMatch) {
       const r = getRecipe(decodeURIComponent(editMatch[1]));
       if (r) renderForm(r);
@@ -2347,11 +3143,20 @@
     else dot.title = "Endnu ikke synkroniseret";
   }
 
+  function renderTopbarChefLink() {
+    const link = document.getElementById("chef-link");
+    if (!link) return;
+    const configured = aiConfigured();
+    link.classList.toggle("topbar__chef--setup", !configured);
+    link.title = configured ? T.chefTitle : T.chefNoKey;
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     migrate();
     wireMenu();
     router();
     renderTopbarSyncDot();
+    renderTopbarChefLink();
     onSyncChange(renderTopbarSyncDot);
     startupSync();
     wireSyncTriggers();
